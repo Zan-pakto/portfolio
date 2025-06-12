@@ -453,7 +453,7 @@ export default function About() {
         >
           <div
             className={`
-            grid grid-cols-12 gap-6 px-8 md:px-24
+            grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-12 gap-4 md:gap-6 px-4 md:px-8 lg:px-24
             transition-all duration-700
             ${
               showGridImages
@@ -462,123 +462,114 @@ export default function About() {
             }
           `}
           >
-            <div className="col-span-4 row-span-2">
+            <div className="lg:col-span-4 lg:row-span-2">
               <Image
                 src="/random1.jpg"
                 alt="Random 1"
                 width={400}
                 height={400}
-                className="w-full h-[400px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
+                className="w-full h-[300px] md:h-[400px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <div className="col-span-3 col-start-6">
+            <div className="lg:col-span-3 lg:col-start-6">
               <Image
                 src="/random2.jpg"
                 alt="Random 2"
                 width={300}
                 height={300}
-                className="w-full h-[300px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
+                className="w-full h-[250px] md:h-[300px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <div className="col-span-3 col-start-9">
+            <div className="lg:col-span-3 lg:col-start-9">
               <Image
                 src="/random3.jpg"
                 alt="Random 3"
                 width={250}
                 height={250}
-                className="w-full h-[250px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
+                className="w-full h-[200px] md:h-[250px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <div className="col-span-3 col-start-6 row-start-2">
+            <div className="lg:col-span-3 lg:col-start-6 lg:row-start-2">
               <Image
                 src="/random4.jpg"
                 alt="Random 4"
                 width={350}
                 height={350}
-                className="w-full h-[350px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
+                className="w-full h-[300px] md:h-[350px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <div className="col-span-3 col-start-9 row-start-2">
+            <div className="lg:col-span-3 lg:col-start-9 lg:row-start-2">
               <Image
                 src="/random5.jpg"
                 alt="Random 5"
                 width={300}
                 height={300}
-                className="w-full h-[300px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
+                className="w-full h-[250px] md:h-[300px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <div className="col-span-4 col-start-1 row-start-3 mt-6">
+            <div className="lg:col-span-4 lg:col-start-1 lg:row-start-3 mt-6">
               <Image
                 src="/random6.jpg"
                 alt="Random 6"
                 width={350}
                 height={350}
-                className="w-full h-[350px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
+                className="w-full h-[300px] md:h-[350px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <div className="col-span-4 col-start-5 row-start-3 mt-6">
+            <div className="lg:col-span-4 lg:col-start-5 lg:row-start-3 mt-6">
               <Image
                 src="/random7.jpg"
                 alt="Random 7"
                 width={400}
                 height={400}
-                className="w-full h-[400px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
+                className="w-full h-[350px] md:h-[400px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <div className="col-span-3 col-start-1 row-start-4 mt-6">
+            <div className="lg:col-span-3 lg:col-start-1 lg:row-start-4 mt-6">
               <Image
                 src="/random8.webp"
                 alt="Random 8"
                 width={280}
                 height={280}
-                className="w-full h-[280px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
+                className="w-full h-[250px] md:h-[280px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <div className="col-span-4 col-start-4 row-start-4 mt-6">
+            <div className="lg:col-span-4 lg:col-start-4 lg:row-start-4 mt-6">
               <Image
                 src="/random9.jpg"
                 alt="Random 9"
                 width={320}
                 height={320}
-                className="w-full h-[320px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
+                className="w-full h-[280px] md:h-[320px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <div className="col-span-3 col-start-8 row-start-4 mt-6">
+            <div className="lg:col-span-3 lg:col-start-8 lg:row-start-4 mt-6">
               <Image
                 src="/random10.jpg"
                 alt="Random 10"
                 width={300}
                 height={300}
-                className="w-full h-[300px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
+                className="w-full h-[250px] md:h-[300px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <div className="col-span-5 col-start-1 row-start-5 mt-6">
+            <div className="lg:col-span-5 lg:col-start-1 lg:row-start-5 mt-6">
               <Image
                 src="/random11.jpg"
                 alt="Random 11"
                 width={380}
                 height={380}
-                className="w-full h-[380px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
+                className="w-full h-[320px] md:h-[380px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <div className="col-span-4 col-start-6 row-start-5 mt-6">
+            <div className="lg:col-span-4 lg:col-start-6 lg:row-start-5 mt-6">
               <Image
                 src="/random12.jpg"
                 alt="Random 12"
                 width={350}
                 height={350}
-                className="w-full h-[350px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
+                className="w-full h-[300px] md:h-[350px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
               />
             </div>
-            {/* <div className="col-span-3 col-start-10 row-start-5 mt-6">
-              <Image
-                src="/random13.jpg"
-                alt="Random 13"
-                width={280}
-                height={280}
-                className="w-full h-[280px] object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
-              />
-            </div> */}
           </div>
         </div>
         <div className="h-24"></div>
