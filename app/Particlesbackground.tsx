@@ -1,11 +1,17 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Particles from "react-tsparticles";
 import { Engine } from "tsparticles-engine";
 import { loadSlim } from "tsparticles-slim";
 
 const Particlesbackground = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
+
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadSlim(engine);
   }, []);
@@ -19,7 +25,7 @@ const Particlesbackground = () => {
         background: { color: "#000000" },
         particles: {
           number: {
-            value: 100,
+            value: isMobile ? 50 : 100,
             density: { enable: true, area: 800 },
           },
           shape: { type: "circle" },
@@ -28,7 +34,7 @@ const Particlesbackground = () => {
             value: { min: 0.1, max: 0.8 },
             animation: {
               enable: true,
-              speed: 0.5,
+              speed: isMobile ? 0.3 : 0.5,
               minimumValue: 0.1,
               sync: false,
             },
@@ -37,14 +43,14 @@ const Particlesbackground = () => {
             value: { min: 1, max: 5 },
             animation: {
               enable: true,
-              speed: 3,
+              speed: isMobile ? 2 : 3,
               minimumValue: 1,
               sync: false,
             },
           },
           move: {
             enable: true,
-            speed: { min: 1, max: 3 },
+            speed: { min: 0.5, max: 2 },
             direction: "bottom",
             straight: false,
             random: true,
@@ -55,12 +61,12 @@ const Particlesbackground = () => {
         },
         interactivity: {
           events: {
-            onhover: { enable: true, mode: "grab" },
+            onhover: { enable: !isMobile },
           },
           modes: {
             grab: {
               distance: 140,
-              links: { opacity: 1 }, // Increase this value for higher opacity (max is 1)
+              links: { opacity: 1 },
             },
           },
         },
