@@ -210,11 +210,11 @@ export default function About() {
               }
             `}
           >
-            I have been working for the past 7 years with Javascript. I&apos;ve been
-            writing/refactoring code and connecting restful apis using Angular,
-            React and Vuejs for a couple of years but I also worked with
-            different stacks in the past. I can help/guide your developers with
-            best practices as well.
+            I have been working for the past 7 years with Javascript. I&apos;ve
+            been writing/refactoring code and connecting restful apis using
+            Angular, React and Vuejs for a couple of years but I also worked
+            with different stacks in the past. I can help/guide your developers
+            with best practices as well.
           </div>
         </div>
         {/* Laptop image */}
@@ -348,11 +348,15 @@ export default function About() {
           <div className="bg-transparent w-full py-8 rounded-xl shadow-lg flex flex-col items-start relative">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-x-12 gap-y-6 text-amber-50 text-lg md:text-2xl font-medium text-left w-full pb-6">
               <div>
+                <div className="font-bold">SDE-Intern</div>
+                <div> Full-Stack Developesr</div>
+                <div className="text-amber-300">2025 - Present</div>
+              </div>
+              <div>
                 <div className="font-bold">Freelance</div>
                 <div> Software Engineer & Full-Stack Developer</div>
                 <div className="text-amber-300">2023 - Present</div>
               </div>
-
               <div>
                 <div className="font-bold">Volunteer</div>
                 <div> Inter At Vasudev Kutumbh Ngo</div>
