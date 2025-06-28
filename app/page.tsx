@@ -14,7 +14,7 @@ export default function Home() {
   useEffect(() => {
     // Check if device is mobile
     setIsMobile(window.innerWidth < 768);
-    
+
     const animateTimer = setTimeout(() => setAnimateOut(true), 500);
     const hideTimer = setTimeout(() => setShowSplash(false), 1000);
     return () => {
@@ -56,7 +56,7 @@ export default function Home() {
           animate={{ opacity: showSplash ? 0 : 1, y: showSplash ? 20 : 0 }}
           transition={{ duration: isMobile ? 0.15 : 0.2, delay: 0.05 }}
         >
-          I'm a
+          I&apos;m a
         </motion.p>
         <motion.h1
           className="text-3xl sm:text-5xl md:text-7xl font-extrabold leading-tight tracking-tight flex flex-wrap justify-center gap-x-4 sm:gap-x-6 italic"
