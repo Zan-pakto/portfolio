@@ -165,7 +165,7 @@ export default function About() {
           {/* Image Block */}
           <div className="flex-1 flex justify-center items-center">
             <Image
-              src="/anime.png"
+              src="/shahi.jpg"
               alt="Arvind Shahi"
               width={448}
               height={448}
