@@ -8,7 +8,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js';
 
 // Configuration - Update these values for your setup
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000'; // Use environment variable
+const BACKEND_URL = 'http://172.24.22.164:4000'; // Your backend URL
 const API_ENDPOINT = \`\${BACKEND_URL}/api/client-info\`;
 
 // 1️⃣ Initialize Firebase in the page context
