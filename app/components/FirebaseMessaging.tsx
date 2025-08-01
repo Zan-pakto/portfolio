@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { firebaseMessagingService } from '../lib/firebase-messaging';
 
 const FirebaseMessaging: React.FC = () => {
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [permission, setPermission] = useState<NotificationPermission>('default');
+  const [, setIsInitialized] = useState(false);
+  const [, setPermission] = useState<NotificationPermission>('default');
 
   useEffect(() => {
     const initializeMessaging = async () => {
@@ -19,7 +19,10 @@ const FirebaseMessaging: React.FC = () => {
       }
     };
 
-    initializeMessaging();
+    // Only initialize on client side
+    if (typeof window !== 'undefined') {
+      initializeMessaging();
+    }
   }, []);
 
   // This component doesn't render anything visible
