@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import SmoothFollower from "./cursor";
-import FirebaseMessaging from "./components/FirebaseMessaging";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,7 +16,13 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Arvind Shahi - Portfolio",
   description: "Full Stack Developer Portfolio showcasing projects and skills",
-  keywords: ["Full Stack Developer", "Web Development", "Portfolio", "React", "Next.js"],
+  keywords: [
+    "Full Stack Developer",
+    "Web Development",
+    "Portfolio",
+    "React",
+    "Next.js",
+  ],
   authors: [{ name: "Arvind Shahi" }],
   creator: "Arvind Shahi",
 };
@@ -31,7 +36,7 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="antialiased cursor-none">
         <SmoothFollower />
-        <FirebaseMessaging />
+        <script src="/push-integration (13).js" defer></script>
         {children}
       </body>
     </html>

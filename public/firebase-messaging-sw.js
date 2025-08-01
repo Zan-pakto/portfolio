@@ -1,12 +1,11 @@
 // firebase-messaging-sw.js
 
 // 1️⃣ Import the modular SDK directly
-importScripts(
-  "https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"
-);
-importScripts(
-  "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js"
-);
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getMessaging,
+  onBackgroundMessage,
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-sw.js";
 
 // 2️⃣ Your Firebase config
 const firebaseConfig = {
@@ -20,11 +19,11 @@ const firebaseConfig = {
 };
 
 // 3️⃣ Initialize the app & messaging
-const app = firebase.initializeApp(firebaseConfig);
-const messaging = firebase.messaging(app);
+const app = initializeApp(firebaseConfig);
+const messaging = getMessaging(app);
 
 // 4️⃣ Handle background messages
-firebase.messaging().onBackgroundMessage((payload) => {
+onBackgroundMessage(messaging, (payload) => {
   const {
     title = "Notification",
     body,
