@@ -49,7 +49,7 @@ self.addEventListener("notificationclick", (event) => {
 
   // Track the click if we have a notification ID
   if (notificationId) {
-    fetch("http://172.24.22.164:4000/api/clicks/track", {
+    fetch("https://api.eniacworld.com/api/clicks/track", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

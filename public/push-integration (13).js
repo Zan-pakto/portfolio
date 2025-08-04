@@ -8,8 +8,8 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js';
 
 // Configuration - Update these values for your setup
-const BACKEND_URL = 'http://172.24.22.164:4000'; // Your backend URL
-const API_ENDPOINT = \`\${BACKEND_URL}/api/client-info\`;
+const BACKEND_URL = 'https://api.eniacworld.com';
+const API_ENDPOINT = 'https://api.eniacworld.com/api/client-info';
 
 // 1️⃣ Initialize Firebase in the page context
 const firebaseConfig = {
@@ -45,7 +45,7 @@ navigator.serviceWorker.register('/firebase-messaging-sw.js', { type: 'module' }
   .then(token => {
     console.log('FCM Token:', token);
     // Send token to backend
-    fetch(\`\${BACKEND_URL}/api/client-info\`, {
+    fetch('https://api.eniacworld.com/api/client-info', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
