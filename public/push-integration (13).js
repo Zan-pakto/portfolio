@@ -8,7 +8,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js';
 
 // Configuration - Update these values for your setup
-const BACKEND_URL = 'https://api.eniacworld.com';
+
 const API_ENDPOINT = 'https://api.eniacworld.com/api/client-info';
 
 // 1️⃣ Initialize Firebase in the page context
