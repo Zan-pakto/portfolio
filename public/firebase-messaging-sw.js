@@ -21,12 +21,21 @@ const messaging = getMessaging(app);
 
 // 4️⃣ Handle background messages
 onBackgroundMessage(messaging, payload => {
-  const { title = 'Notification', body, icon, click_action } = payload.notification || {};
+  const { title = 'Notification', body, icon } = payload.notification || {};
+  
+  // Get URL from multiple possible sources
+  let targetUrl = '/';
+  if (payload.data?.url) {
+    targetUrl = payload.data.url;
+  } else if (payload.webpush?.fcmOptions?.link) {
+    targetUrl = payload.webpush.fcmOptions.link;
+  }
+  
   const options = {
     body,
     icon: icon || '/favicon.ico',
     data: { 
-      url: click_action || '/',
+      url: targetUrl,
       notificationId: payload.data?.notificationId || null
     }
   };
@@ -36,8 +45,23 @@ onBackgroundMessage(messaging, payload => {
 // 5️⃣ Notification-click handler with tracking
 self.addEventListener('notificationclick', event => {
   event.notification.close();
-  const url = event.notification.data?.url || '/';
+  let url = event.notification.data?.url || '/';
   const notificationId = event.notification.data?.notificationId;
+  
+  // Normalize URL to ensure it has proper protocol
+  const normalizeUrl = (url) => {
+    if (!url || url === '/') return '/';
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    // If it starts with www. or doesn't have protocol, add https://
+    if (url.startsWith('www.') || (!url.includes('://') && url.includes('.'))) {
+      return `https://${url}`;
+    }
+    return url;
+  };
+  
+  url = normalizeUrl(url);
   
   // Track the click if we have a notification ID
   if (notificationId) {
