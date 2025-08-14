@@ -19,27 +19,24 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
-// 4️⃣ Handle background messages
+// 4️⃣ Handle background messages - Let FCM handle notification display automatically
 onBackgroundMessage(messaging, payload => {
-  const { title = 'Notification', body, icon } = payload.notification || {};
+  console.log('Background message received:', payload);
   
-  // Get URL from multiple possible sources
-  let targetUrl = '/';
-  if (payload.data?.url) {
-    targetUrl = payload.data.url;
-  } else if (payload.webpush?.fcmOptions?.link) {
-    targetUrl = payload.webpush.fcmOptions.link;
+  // Only track the notification if needed - don't create duplicate notifications
+  if (payload.data?.notificationId) {
+    // Track notification received (optional)
+    fetch('http://192.168.1.6:4000/api/notifications/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        notificationId: payload.data.notificationId,
+        status: 'received'
+      })
+    }).catch(error => {
+      console.error('Failed to track notification:', error);
+    });
   }
-  
-  const options = {
-    body,
-    icon: icon || '/favicon.ico',
-    data: { 
-      url: targetUrl,
-      notificationId: payload.data?.notificationId || null
-    }
-  };
-  self.registration.showNotification(title, options);
 });
 
 // 5️⃣ Notification-click handler with tracking
@@ -65,7 +62,7 @@ self.addEventListener('notificationclick', event => {
   
   // Track the click if we have a notification ID
   if (notificationId) {
-    fetch('https://api.eniacworld.com/api/clicks/track', {
+    fetch('http://192.168.1.6:4000/api/clicks/track', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
