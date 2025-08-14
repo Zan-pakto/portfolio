@@ -22,24 +22,41 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
-// 4️⃣ Handle background messages — directly use incoming URL
+// Utility to normalize URL
+const normalizeUrl = (url) => {
+  if (!url || url === "/") return "/";
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  if (url.startsWith("www.") || (url.includes(".") && !url.startsWith("/"))) {
+    return `https://${url}`;
+  }
+  if (url.startsWith("/")) return url;
+  return `/${url}`;
+};
+
+// 4️⃣ Handle background messages — always show manually
 onBackgroundMessage(messaging, (payload) => {
   console.log("Background message received:", payload);
 
-  // Directly pass URL as received
+  // Figure out target URL from multiple possible locations
   const targetUrl =
     payload.webpush?.fcmOptions?.link ||
     payload.data?.url ||
     "/";
 
-  // Show the notification
+  // Normalize and attach to notification data
+  const cleanUrl = normalizeUrl(targetUrl);
+
+  // Show the notification manually (avoids duplicates & merges)
   self.registration.showNotification(
     payload.notification?.title || payload.data?.title || "Notification",
     {
       body: payload.notification?.body || payload.data?.body || "",
-      icon: payload.notification?.icon || payload.data?.icon || "/favicon.ico",
+      icon:
+        payload.notification?.icon ||
+        payload.data?.icon ||
+        "/favicon.ico",
       data: {
-        url: targetUrl, // no normalization, use as-is
+        url: cleanUrl,
         notificationId: payload.data?.notificationId || null,
       },
     }
@@ -54,15 +71,17 @@ onBackgroundMessage(messaging, (payload) => {
         notificationId: payload.data.notificationId,
         status: "received",
       }),
-    }).catch((err) => console.error("Failed to track notification:", err));
+    }).catch((err) =>
+      console.error("Failed to track notification:", err)
+    );
   }
 });
 
-// 5️⃣ Notification-click handler
+// 5️⃣ Notification-click handler with tracking
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
-  const rawUrl = event.notification.data?.url || "/";
+  const url = event.notification.data?.url || "/";
   const notificationId = event.notification.data?.notificationId;
 
   // Track click if ID present
@@ -72,27 +91,24 @@ self.addEventListener("notificationclick", (event) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         notificationId,
-        url: rawUrl,
+        url,
       }),
-    }).catch((err) => console.error("Failed to track click:", err));
+    }).catch((err) =>
+      console.error("Failed to track click:", err)
+    );
   }
 
   // Focus existing tab or open new one
   event.waitUntil(
-    clients.matchAll({ type: "window", includeUncontrolled: true }).then((wins) => {
-      const match = wins.find((w) => w.url === rawUrl);
-      if (match) {
-        return match.focus();
-      }
-      // If rawUrl does not have protocol, default to http
-      if (!/^https?:\/\//i.test(rawUrl)) {
-        return clients.openWindow("https://" + rawUrl);
-      }
-      return clients.openWindow(rawUrl);
-    })
+    clients
+      .matchAll({ type: "window", includeUncontrolled: true })
+      .then((wins) => {
+        const win = wins.find((w) => w.url === url);
+        return win ? win.focus() : clients.openWindow(url);
+      })
   );
 });
 
 // 6️⃣ Skip waiting & claim clients
-self.addEventListener("install", () => self.skipWaiting());
+self.addEventListener("install", (e) => self.skipWaiting());
 self.addEventListener("activate", (e) => e.waitUntil(clients.claim()));
