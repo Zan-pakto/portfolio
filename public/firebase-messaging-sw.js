@@ -19,30 +19,39 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
-// 4️⃣ Handle background messages - Create notification with target URL
+// 4️⃣ Handle background messages - Let FCM handle notification display automatically
 onBackgroundMessage(messaging, payload => {
   console.log('Background message received:', payload);
   
-  const { title = 'Notification', body, icon } = payload.notification || {};
-  const targetUrl = payload.webpush?.fcmOptions?.link || payload.data?.url || '/';
-  
-  const options = {
-    body,
-    icon: icon || '/favicon.ico',
-    data: { 
-      url: targetUrl,
-      notificationId: payload.data?.notificationId || null
-    }
-  };
-  
-  self.registration.showNotification(title, options);
+  // Only track the notification if needed - don't create duplicate notifications
+  if (payload.data?.notificationId) {
+    // Track notification received (optional)
+    fetch('http://192.168.1.6:4000/api/notifications/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        notificationId: payload.data.notificationId,
+        status: 'received'
+      })
+    }).catch(error => {
+      console.error('Failed to track notification:', error);
+    });
+  }
 });
 
 // 5️⃣ Notification-click handler with tracking
 self.addEventListener('notificationclick', event => {
   event.notification.close();
-  // Get URL from notification data - this will be the target URL from backend
-  let url = event.notification.data?.url || '/';
+  
+  // Get URL from FCM notification data - this will be the target URL from backend
+  // The backend sends the URL in webpush.fcmOptions.link, which gets stored in notification data
+  let url = event.notification.data?.url || 
+            event.notification.data?.click_action || 
+            event.notification.data?.link || 
+            event.notification.data?.webpush?.fcmOptions?.link ||
+            event.notification.data?.fcmOptions?.link ||
+            '/';
+            
   const notificationId = event.notification.data?.notificationId;
   
   // Normalize URL to ensure it has proper protocol
