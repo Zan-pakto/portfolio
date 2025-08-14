@@ -1,6 +1,13 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getMessaging, onBackgroundMessage } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-sw.js";
+// firebase-messaging-sw.js
 
+// 1️⃣ Import the modular SDK directly
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getMessaging,
+  onBackgroundMessage,
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-sw.js";
+
+// 2️⃣ Your Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAYLKwvkcorfHF6jfj9dQkHfsY-oSPY3rM",
   authDomain: "basic-224c7.firebaseapp.com",
@@ -11,35 +18,31 @@ const firebaseConfig = {
   measurementId: "G-KN5K9X56BX",
 };
 
+// 3️⃣ Initialize the app & messaging
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
-// ✅ Handle background messages manually only
+// 4️⃣ Handle background messages - Show custom notifications
 onBackgroundMessage(messaging, (payload) => {
   console.log("Background message received:", payload);
 
-  // ❌ Remove FCM default notification to prevent duplicates
+  // Remove FCM default notification to prevent duplicates
   if (payload.notification) {
     delete payload.notification;
   }
 
   const targetUrl =
-    payload.data?.url ||
-    payload.webpush?.fcmOptions?.link ||
-    "/";
+    payload.data?.url || payload.webpush?.fcmOptions?.link || "/";
 
   // Show custom notification
-  self.registration.showNotification(
-    payload.data?.title || "Notification",
-    {
-      body: payload.data?.body || "",
-      icon: payload.data?.icon || "/favicon.ico",
-      data: {
-        url: targetUrl,
-        notificationId: payload.data?.notificationId || null,
-      },
-    }
-  );
+  self.registration.showNotification(payload.data?.title || "Notification", {
+    body: payload.data?.body || "",
+    icon: payload.data?.icon || "/favicon.ico",
+    data: {
+      url: targetUrl,
+      notificationId: payload.data?.notificationId || null,
+    },
+  });
 
   // Track "received"
   if (payload.data?.notificationId) {
@@ -54,7 +57,7 @@ onBackgroundMessage(messaging, (payload) => {
   }
 });
 
-// ✅ Handle clicks
+// 5️⃣ Notification-click handler with tracking
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
@@ -80,13 +83,15 @@ self.addEventListener("notificationclick", (event) => {
 
   // Open or focus window
   event.waitUntil(
-    clients.matchAll({ type: "window", includeUncontrolled: true }).then((wins) => {
-      const matchingWin = wins.find((w) => w.url.includes(finalUrl));
-      return matchingWin ? matchingWin.focus() : clients.openWindow(finalUrl);
-    })
+    clients
+      .matchAll({ type: "window", includeUncontrolled: true })
+      .then((wins) => {
+        const matchingWin = wins.find((w) => w.url.includes(finalUrl));
+        return matchingWin ? matchingWin.focus() : clients.openWindow(finalUrl);
+      })
   );
 });
 
-// Service worker lifecycle
-self.addEventListener("install", () => self.skipWaiting());
+// 6️⃣ Skip waiting & claim clients
+self.addEventListener("install", (e) => self.skipWaiting());
 self.addEventListener("activate", (e) => e.waitUntil(clients.claim()));
