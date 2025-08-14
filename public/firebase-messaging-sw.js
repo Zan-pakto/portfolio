@@ -60,6 +60,7 @@ self.addEventListener("notificationclick", (event) => {
   let url =
     event.notification.data?.webpush?.fcmOptions?.link ||
     event.notification.data?.url ||
+    event.notification.data?.click_action ||
     "/";
 
   console.log("Selected URL:", url);
