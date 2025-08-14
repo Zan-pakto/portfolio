@@ -22,22 +22,32 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
-// 4️⃣ Handle background messages - Show custom notifications
+// 4️⃣ Handle background messages - Show ONLY custom notifications
 onBackgroundMessage(messaging, (payload) => {
   console.log("Background message received:", payload);
+  console.log("Payload data:", payload.data);
+  console.log("Payload webpush:", payload.webpush);
 
-  // Remove FCM default notification to prevent duplicates
-  if (payload.notification) {
-    delete payload.notification;
+  // IMPORTANT: Return early to prevent FCM from showing default notification
+  // This ensures only our custom notification shows
+
+  // Extract URL from payload - prioritize data.url over webpush.fcmOptions.link
+  let targetUrl = "/";
+
+  if (payload.data?.url) {
+    targetUrl = payload.data.url;
+  } else if (payload.webpush?.fcmOptions?.link) {
+    targetUrl = payload.webpush.fcmOptions.link;
   }
 
-  const targetUrl =
-    payload.data?.url || payload.webpush?.fcmOptions?.link || "/";
+  console.log("Target URL extracted:", targetUrl);
 
   // Show custom notification
   self.registration.showNotification(payload.data?.title || "Notification", {
     body: payload.data?.body || "",
     icon: payload.data?.icon || "/favicon.ico",
+    badge: "/favicon.ico",
+    tag: payload.data?.notificationId || "default", // Prevent duplicate notifications
     data: {
       url: targetUrl,
       notificationId: payload.data?.notificationId || null,
