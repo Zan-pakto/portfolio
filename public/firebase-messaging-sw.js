@@ -22,36 +22,22 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
-// Utility to normalize URL
-const normalizeUrl = (url) => {
-  if (!url || url === "/") return "/";
-  if (url.startsWith("http://") || url.startsWith("https://")) return url;
-  if (url.startsWith("www.") || (url.includes(".") && !url.startsWith("/"))) {
-    return `https://${url}`;
-  }
-  if (url.startsWith("/")) return url;
-  return `/${url}`;
-};
-
 // 4️⃣ Handle background messages — always show manually
 onBackgroundMessage(messaging, (payload) => {
   console.log("Background message received:", payload);
 
-  // Figure out target URL from multiple possible locations
+  // Directly take the URL as it comes
   const targetUrl =
     payload.webpush?.fcmOptions?.link || payload.data?.url || "/";
 
-  // Normalize and attach to notification data
-  const cleanUrl = normalizeUrl(targetUrl);
-
-  // Show the notification manually (avoids duplicates & merges)
+  // Show the notification manually
   self.registration.showNotification(
     payload.notification?.title || payload.data?.title || "Notification",
     {
       body: payload.notification?.body || payload.data?.body || "",
       icon: payload.notification?.icon || payload.data?.icon || "/favicon.ico",
       data: {
-        url: cleanUrl,
+        url: targetUrl,
         notificationId: payload.data?.notificationId || null,
       },
     }
