@@ -57,11 +57,7 @@ self.addEventListener("notificationclick", (event) => {
 
   // Get URL from FCM notification data - ONLY use webpush.fcmOptions.link if present
   // If not present, fall back to '/'
-  let url =
-    event.notification.data?.webpush?.fcmOptions?.link ||
-    event.notification.data?.url ||
-    event.notification.data?.click_action ||
-    "/";
+  let url = event.notification.data?.webpush?.fcmOptions?.link;
 
   console.log("Selected URL:", url);
   const notificationId = event.notification.data?.notificationId;
