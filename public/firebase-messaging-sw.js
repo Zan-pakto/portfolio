@@ -1,13 +1,6 @@
-// firebase-messaging-sw.js
-
-// 1️⃣ Import the modular SDK directly
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  getMessaging,
-  onBackgroundMessage,
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-sw.js";
+import { getMessaging, onBackgroundMessage } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-sw.js";
 
-// 2️⃣ Your Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAYLKwvkcorfHF6jfj9dQkHfsY-oSPY3rM",
   authDomain: "basic-224c7.firebaseapp.com",
@@ -18,51 +11,30 @@ const firebaseConfig = {
   measurementId: "G-KN5K9X56BX",
 };
 
-// 3️⃣ Initialize the app & messaging
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
-// Utility to normalize URL
-const normalizeUrl = (url) => {
-  if (!url || url === "/") return "/";
-  if (url.startsWith("http://") || url.startsWith("https://")) return url;
-  if (url.startsWith("www.") || (url.includes(".") && !url.startsWith("/"))) {
-    return `https://${url}`;
-  }
-  if (url.startsWith("/")) return url;
-  return `/${url}`;
-};
-
-// 4️⃣ Handle background messages — always show manually
+// ✅ Only show notification manually
 onBackgroundMessage(messaging, (payload) => {
   console.log("Background message received:", payload);
 
-  // Figure out target URL from multiple possible locations
   const targetUrl =
-    payload.webpush?.fcmOptions?.link ||
     payload.data?.url ||
+    payload.webpush?.fcmOptions?.link ||
     "/";
 
-  // Normalize and attach to notification data
-  const cleanUrl = normalizeUrl(targetUrl);
-
-  // Show the notification manually (avoids duplicates & merges)
   self.registration.showNotification(
-    payload.notification?.title || payload.data?.title || "Notification",
+    payload.data?.title || "Notification",
     {
-      body: payload.notification?.body || payload.data?.body || "",
-      icon:
-        payload.notification?.icon ||
-        payload.data?.icon ||
-        "/favicon.ico",
+      body: payload.data?.body || "",
+      icon: payload.data?.icon || "/favicon.ico",
       data: {
-        url: cleanUrl,
+        url: targetUrl,
         notificationId: payload.data?.notificationId || null,
       },
     }
   );
 
-  // Optional: Track "received"
   if (payload.data?.notificationId) {
     fetch("http://192.168.1.6:4000/api/notifications/track", {
       method: "POST",
@@ -77,38 +49,36 @@ onBackgroundMessage(messaging, (payload) => {
   }
 });
 
-// 5️⃣ Notification-click handler with tracking
+// ✅ Handle clicks properly
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
-  const url = event.notification.data?.url || "/";
+  const rawUrl = event.notification.data?.url || "/";
   const notificationId = event.notification.data?.notificationId;
 
-  // Track click if ID present
   if (notificationId) {
     fetch("http://192.168.1.6:4000/api/clicks/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        notificationId,
-        url,
-      }),
-    }).catch((err) =>
-      console.error("Failed to track click:", err)
-    );
+      body: JSON.stringify({ notificationId, url: rawUrl }),
+    }).catch((err) => console.error("Failed to track click:", err));
   }
 
-  // Focus existing tab or open new one
+  // Always ensure the URL is absolute or root-relative
+  const finalUrl =
+    rawUrl.startsWith("http://") || rawUrl.startsWith("https://")
+      ? rawUrl
+      : rawUrl.startsWith("/")
+      ? rawUrl
+      : `https://${rawUrl}`;
+
   event.waitUntil(
-    clients
-      .matchAll({ type: "window", includeUncontrolled: true })
-      .then((wins) => {
-        const win = wins.find((w) => w.url === url);
-        return win ? win.focus() : clients.openWindow(url);
-      })
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((wins) => {
+      const matchingWin = wins.find((w) => w.url.includes(finalUrl));
+      return matchingWin ? matchingWin.focus() : clients.openWindow(finalUrl);
+    })
   );
 });
 
-// 6️⃣ Skip waiting & claim clients
-self.addEventListener("install", (e) => self.skipWaiting());
+self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (e) => e.waitUntil(clients.claim()));
