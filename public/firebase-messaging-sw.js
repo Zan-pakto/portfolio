@@ -25,6 +25,11 @@ const messaging = getMessaging(app);
 // 4️⃣ Handle background messages - Let FCM handle notification display automatically
 onBackgroundMessage(messaging, (payload) => {
   console.log("Background message received:", payload);
+  console.log(
+    "Background message - webpush.fcmOptions:",
+    payload.webpush?.fcmOptions
+  );
+  console.log("Background message - data:", payload.data);
 
   // Only track the notification if needed - don't create duplicate notifications
   if (payload.data?.notificationId) {
@@ -46,10 +51,18 @@ onBackgroundMessage(messaging, (payload) => {
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
+  // Debug: Log all notification data
+  console.log("Notification clicked - All data:", event.notification.data);
+  console.log("Notification clicked - All notification:", event.notification);
+
   // Get URL from FCM notification data - ONLY use webpush.fcmOptions.link if present
   // If not present, fall back to '/'
-  let url = event.notification.data?.webpush?.fcmOptions?.link || "/";
+  let url =
+    event.notification.data?.webpush?.fcmOptions?.link ||
+    event.notification.data?.url ||
+    "/";
 
+  console.log("Selected URL:", url);
   const notificationId = event.notification.data?.notificationId;
 
   // Normalize URL to ensure it has proper protocol
