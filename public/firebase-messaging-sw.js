@@ -46,6 +46,7 @@ onBackgroundMessage(messaging, (payload) => {
   self.registration.showNotification(payload.data?.title || "Notification", {
     body: payload.data?.body || "",
     icon: payload.data?.icon || "/favicon.ico",
+    image: payload.data?.image || null, // Add image support
     badge: "/favicon.ico",
     tag: payload.data?.notificationId || "default", // Prevent duplicate notifications
     data: {
