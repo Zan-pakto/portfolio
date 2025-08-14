@@ -22,18 +22,43 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
-// 4️⃣ Handle background messages - Let FCM handle notification display automatically
+// Utility to normalize URL
+const normalizeUrl = (url) => {
+  if (!url || url === "/") return "/";
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  if (url.startsWith("www.") || (url.includes(".") && !url.startsWith("/"))) {
+    return `https://${url}`;
+  }
+  if (url.startsWith("/")) return url;
+  return `/${url}`;
+};
+
+// 4️⃣ Handle background messages — always show manually
 onBackgroundMessage(messaging, (payload) => {
   console.log("Background message received:", payload);
-  console.log(
-    "Background message - webpush.fcmOptions:",
-    payload.webpush?.fcmOptions
-  );
-  console.log("Background message - data:", payload.data);
 
-  // Only track the notification if needed - don't create duplicate notifications
+  // Figure out target URL from multiple possible locations
+  const targetUrl =
+    payload.webpush?.fcmOptions?.link || payload.data?.url || "/";
+
+  // Normalize and attach to notification data
+  const cleanUrl = normalizeUrl(targetUrl);
+
+  // Show the notification manually (avoids duplicates & merges)
+  self.registration.showNotification(
+    payload.notification?.title || payload.data?.title || "Notification",
+    {
+      body: payload.notification?.body || payload.data?.body || "",
+      icon: payload.notification?.icon || payload.data?.icon || "/favicon.ico",
+      data: {
+        url: cleanUrl,
+        notificationId: payload.data?.notificationId || null,
+      },
+    }
+  );
+
+  // Optional: Track "received"
   if (payload.data?.notificationId) {
-    // Track notification received (optional)
     fetch("http://192.168.1.6:4000/api/notifications/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -41,9 +66,7 @@ onBackgroundMessage(messaging, (payload) => {
         notificationId: payload.data.notificationId,
         status: "received",
       }),
-    }).catch((error) => {
-      console.error("Failed to track notification:", error);
-    });
+    }).catch((err) => console.error("Failed to track notification:", err));
   }
 });
 
@@ -51,69 +74,22 @@ onBackgroundMessage(messaging, (payload) => {
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
-  // Debug: Log all notification data
-  console.log("Notification clicked - All data:", event.notification.data);
-  console.log("Notification clicked - All notification:", event.notification);
-
-  // Get URL from FCM notification data - ONLY use webpush.fcmOptions.link if present
-  // If not present, fall back to '/'
-  let url = event.notification.data?.webpush?.fcmOptions?.link;
-
-  console.log("Selected URL:", url);
+  const url = event.notification.data?.url || "/";
   const notificationId = event.notification.data?.notificationId;
 
-  // Normalize URL to ensure it has proper protocol
-  const normalizeUrl = (url) => {
-    if (!url || url === "/") return "/";
-
-    // If it's already a full URL with protocol, return as is
-    if (url.startsWith("http://") || url.startsWith("https://")) {
-      return url;
-    }
-
-    // If it starts with www. or contains a domain (has dots), add https://
-    if (url.startsWith("www.") || (url.includes(".") && !url.startsWith("/"))) {
-      return `https://${url}`;
-    }
-
-    // If it's a relative path (starts with /), return as is
-    if (url.startsWith("/")) {
-      return url;
-    }
-
-    // For any other case, treat as relative path
-    return `/${url}`;
-  };
-
-  url = normalizeUrl(url);
-
-  // Track the click if we have a notification ID
+  // Track click if ID present
   if (notificationId) {
     fetch("http://192.168.1.6:4000/api/clicks/track", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        notificationId: notificationId,
-        url: url,
+        notificationId,
+        url,
       }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Click tracking failed");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Click tracked successfully:", data);
-      })
-      .catch((error) => {
-        console.error("Failed to track click:", error);
-        // Don't let click tracking failure prevent the URL from opening
-      });
+    }).catch((err) => console.error("Failed to track click:", err));
   }
 
+  // Focus existing tab or open new one
   event.waitUntil(
     clients
       .matchAll({ type: "window", includeUncontrolled: true })
