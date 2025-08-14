@@ -23,7 +23,7 @@ const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
 // 4️⃣ Handle background messages - Show ONLY custom notifications
-onBackgroundMessage(messaging, (payload) => {
+onBackgroundMessage(messaging, async (payload) => {
   console.log("Background message received:", payload);
   console.log("Payload data:", payload.data);
   console.log("Payload webpush:", payload.webpush);
@@ -41,19 +41,62 @@ onBackgroundMessage(messaging, (payload) => {
   }
 
   console.log("Target URL extracted:", targetUrl);
+  console.log("Image URL:", payload.data?.image);
+  console.log("Icon URL:", payload.data?.icon);
+
+  // Validate image URL
+  let imageUrl = payload.data?.image;
+  console.log("Raw image from payload:", imageUrl);
+
+  if (imageUrl) {
+    // Ensure image URL is absolute
+    if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+      imageUrl = new URL(imageUrl, self.location.origin).href;
+    }
+    console.log("Processed Image URL:", imageUrl);
+
+    // Test if image is accessible
+    try {
+      const imgResponse = await fetch(imageUrl, { method: "HEAD" });
+      console.log(
+        "Image accessibility test:",
+        imgResponse.ok ? "SUCCESS" : "FAILED",
+        imgResponse.status
+      );
+    } catch (error) {
+      console.log("Image accessibility test FAILED:", error.message);
+    }
+  }
 
   // Show custom notification
-  self.registration.showNotification(payload.data?.title || "Notification", {
+  const notificationOptions = {
     body: payload.data?.body || "",
     icon: payload.data?.icon || "/favicon.ico",
-    image: payload.data?.image || null, // Add image support
     badge: "/favicon.ico",
     tag: payload.data?.notificationId || "default", // Prevent duplicate notifications
     data: {
       url: targetUrl,
       notificationId: payload.data?.notificationId || null,
     },
-  });
+  };
+
+  // Only add image if we have a valid image URL
+  if (imageUrl) {
+    notificationOptions.image = imageUrl;
+    console.log("Adding image to notification:", imageUrl);
+  } else {
+    console.log("No valid image URL found, skipping image");
+  }
+
+  // Add some additional notification options for better display
+  notificationOptions.requireInteraction = false;
+  notificationOptions.silent = false;
+  notificationOptions.vibrate = [200, 100, 200];
+
+  self.registration.showNotification(
+    payload.data?.title || "Notification",
+    notificationOptions
+  );
 
   // Track "received"
   if (payload.data?.notificationId) {
