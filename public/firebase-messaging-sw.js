@@ -72,6 +72,7 @@ onBackgroundMessage(messaging, async (payload) => {
   const notificationOptions = {
     body: payload.data?.body || "",
     icon: payload.data?.icon || "/favicon.ico",
+    image: payload.data?.image || null,
     badge: "/favicon.ico",
     tag: payload.data?.notificationId || "default", // Prevent duplicate notifications
     data: {
