@@ -22,22 +22,24 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
-// 4️⃣ Handle background messages — always show manually
+// 4️⃣ Handle background messages — directly use incoming URL
 onBackgroundMessage(messaging, (payload) => {
   console.log("Background message received:", payload);
 
-  // Directly take the URL as it comes
+  // Directly pass URL as received
   const targetUrl =
-    payload.webpush?.fcmOptions?.link || payload.data?.url || "/";
+    payload.webpush?.fcmOptions?.link ||
+    payload.data?.url ||
+    "/";
 
-  // Show the notification manually
+  // Show the notification
   self.registration.showNotification(
     payload.notification?.title || payload.data?.title || "Notification",
     {
       body: payload.notification?.body || payload.data?.body || "",
       icon: payload.notification?.icon || payload.data?.icon || "/favicon.ico",
       data: {
-        url: targetUrl,
+        url: targetUrl, // no normalization, use as-is
         notificationId: payload.data?.notificationId || null,
       },
     }
@@ -56,11 +58,11 @@ onBackgroundMessage(messaging, (payload) => {
   }
 });
 
-// 5️⃣ Notification-click handler with tracking
+// 5️⃣ Notification-click handler
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
-  const url = event.notification.data?.url || "/";
+  const rawUrl = event.notification.data?.url || "/";
   const notificationId = event.notification.data?.notificationId;
 
   // Track click if ID present
@@ -70,22 +72,27 @@ self.addEventListener("notificationclick", (event) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         notificationId,
-        url,
+        url: rawUrl,
       }),
     }).catch((err) => console.error("Failed to track click:", err));
   }
 
   // Focus existing tab or open new one
   event.waitUntil(
-    clients
-      .matchAll({ type: "window", includeUncontrolled: true })
-      .then((wins) => {
-        const win = wins.find((w) => w.url === url);
-        return win ? win.focus() : clients.openWindow(url);
-      })
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((wins) => {
+      const match = wins.find((w) => w.url === rawUrl);
+      if (match) {
+        return match.focus();
+      }
+      // If rawUrl does not have protocol, default to http
+      if (!/^https?:\/\//i.test(rawUrl)) {
+        return clients.openWindow("https://" + rawUrl);
+      }
+      return clients.openWindow(rawUrl);
+    })
   );
 });
 
 // 6️⃣ Skip waiting & claim clients
-self.addEventListener("install", (e) => self.skipWaiting());
+self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (e) => e.waitUntil(clients.claim()));
