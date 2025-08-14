@@ -14,15 +14,21 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
-// ✅ Only show notification manually
+// ✅ Handle background messages manually only
 onBackgroundMessage(messaging, (payload) => {
   console.log("Background message received:", payload);
+
+  // ❌ Remove FCM default notification to prevent duplicates
+  if (payload.notification) {
+    delete payload.notification;
+  }
 
   const targetUrl =
     payload.data?.url ||
     payload.webpush?.fcmOptions?.link ||
     "/";
 
+  // Show custom notification
   self.registration.showNotification(
     payload.data?.title || "Notification",
     {
@@ -35,6 +41,7 @@ onBackgroundMessage(messaging, (payload) => {
     }
   );
 
+  // Track "received"
   if (payload.data?.notificationId) {
     fetch("http://192.168.1.6:4000/api/notifications/track", {
       method: "POST",
@@ -43,19 +50,18 @@ onBackgroundMessage(messaging, (payload) => {
         notificationId: payload.data.notificationId,
         status: "received",
       }),
-    }).catch((err) =>
-      console.error("Failed to track notification:", err)
-    );
+    }).catch((err) => console.error("Failed to track notification:", err));
   }
 });
 
-// ✅ Handle clicks properly
+// ✅ Handle clicks
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
   const rawUrl = event.notification.data?.url || "/";
   const notificationId = event.notification.data?.notificationId;
 
+  // Track click
   if (notificationId) {
     fetch("http://192.168.1.6:4000/api/clicks/track", {
       method: "POST",
@@ -64,7 +70,7 @@ self.addEventListener("notificationclick", (event) => {
     }).catch((err) => console.error("Failed to track click:", err));
   }
 
-  // Always ensure the URL is absolute or root-relative
+  // Normalize URL
   const finalUrl =
     rawUrl.startsWith("http://") || rawUrl.startsWith("https://")
       ? rawUrl
@@ -72,6 +78,7 @@ self.addEventListener("notificationclick", (event) => {
       ? rawUrl
       : `https://${rawUrl}`;
 
+  // Open or focus window
   event.waitUntil(
     clients.matchAll({ type: "window", includeUncontrolled: true }).then((wins) => {
       const matchingWin = wins.find((w) => w.url.includes(finalUrl));
@@ -80,5 +87,6 @@ self.addEventListener("notificationclick", (event) => {
   );
 });
 
+// Service worker lifecycle
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (e) => e.waitUntil(clients.claim()));
