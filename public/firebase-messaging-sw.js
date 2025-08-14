@@ -64,6 +64,8 @@ self.addEventListener("notificationclick", (event) => {
   const rawUrl = event.notification.data?.url || "/";
   const notificationId = event.notification.data?.notificationId;
 
+  console.log("Raw URL from notification:", rawUrl);
+
   // Track click
   if (notificationId) {
     fetch("http://192.168.1.6:4000/api/clicks/track", {
@@ -73,13 +75,27 @@ self.addEventListener("notificationclick", (event) => {
     }).catch((err) => console.error("Failed to track click:", err));
   }
 
-  // Normalize URL
-  const finalUrl =
-    rawUrl.startsWith("http://") || rawUrl.startsWith("https://")
-      ? rawUrl
-      : rawUrl.startsWith("/")
-      ? rawUrl
-      : `https://${rawUrl}`;
+  // Normalize URL - Fix URL merging issue
+  let finalUrl = rawUrl;
+
+  // If it's already a complete URL with protocol, use as is
+  if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) {
+    finalUrl = rawUrl;
+  }
+  // If it's a relative path (starts with /), keep as is
+  else if (rawUrl.startsWith("/")) {
+    finalUrl = rawUrl;
+  }
+  // If it's a domain without protocol, add https://
+  else if (rawUrl.includes(".") && !rawUrl.startsWith("/")) {
+    finalUrl = `https://${rawUrl}`;
+  }
+  // For any other case, treat as relative path
+  else {
+    finalUrl = `/${rawUrl}`;
+  }
+
+  console.log("Final normalized URL:", finalUrl);
 
   // Open or focus window
   event.waitUntil(
