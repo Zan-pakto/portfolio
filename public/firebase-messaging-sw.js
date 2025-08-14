@@ -48,14 +48,24 @@ self.addEventListener('notificationclick', event => {
   // Normalize URL to ensure it has proper protocol
   const normalizeUrl = (url) => {
     if (!url || url === '/') return '/';
+    
+    // If it's already a full URL with protocol, return as is
     if (url.startsWith('http://') || url.startsWith('https://')) {
       return url;
     }
-    // If it starts with www. or doesn't have protocol, add https://
-    if (url.startsWith('www.') || (!url.includes('://') && url.includes('.'))) {
+    
+    // If it starts with www. or contains a domain (has dots), add https://
+    if (url.startsWith('www.') || (url.includes('.') && !url.startsWith('/'))) {
       return `https://${url}`;
     }
-    return url;
+    
+    // If it's a relative path (starts with /), return as is
+    if (url.startsWith('/')) {
+      return url;
+    }
+    
+    // For any other case, treat as relative path
+    return `/${url}`;
   };
   
   url = normalizeUrl(url);
