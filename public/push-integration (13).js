@@ -93,21 +93,21 @@ function showCustomPermissionPopup() {
   if (document.getElementById('custom-permission-popup')) return;
 
   var theme = {
-  "template": "default",
-  "title": "Stay Updated!",
-  "message": "Get notified about our latest updates and offers. You can unsubscribe anytime.",
-  "allowButtonText": "Allow Notifications",
-  "denyButtonText": "Not Now",
+  "template": "only-allow",
+  "title": "wanna stay updated",
+  "message": "get notified about our updates",
+  "allowButtonText": "Allow",
+  "denyButtonText": "",
   "primaryColor": "#3b82f6",
   "backgroundColor": "#ffffff",
   "textColor": "#1f2937",
-  "borderRadius": "12",
+  "borderRadius": "8",
   "animation": "slideIn",
   "position": "top",
-  "showIcon": true,
+  "showIcon": false,
   "iconUrl": "https://www.pngmart.com/files/9/YouTube-Bell-Icon-PNG-Free-Download.png",
-  "showCloseButton": true,
-  "templateType": "default"
+  "showCloseButton": false,
+  "templateType": "only-allow"
 };
 
   var popup = document.createElement('div');
