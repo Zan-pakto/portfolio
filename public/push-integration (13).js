@@ -95,7 +95,7 @@ function showCustomPermissionPopup() {
   var theme = {
   "enabled": true,
   "title": "asdfasdf",
-  "message": "asdfasdfasdfasfasdfasdfasdfaf",
+  "message": "checking",
   "iconUrl": "https://www.pngmart.com/files/9/YouTube-Bell-Icon-PNG-Free-Download.png",
   "allowButtonText": "adfa",
   "denyButtonText": "asdf",
@@ -130,6 +130,8 @@ function showCustomPermissionPopup() {
   popup.style.border = '1px solid ' + theme.primaryColor + '20';
   popup.style.maxWidth = '400px';
   popup.style.width = '90%';
+  popup.style.minHeight = '60px';
+  popup.style.overflow = 'hidden';
   
   // Create content wrapper for layout
   var contentWrapper = document.createElement('div');
