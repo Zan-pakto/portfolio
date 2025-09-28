@@ -94,8 +94,8 @@ function showCustomPermissionPopup() {
 
   var theme = {
   "template": "only-allow",
-  "title": "stay updated",
-  "message": "get notified byyy us",
+  "title": "stay updated!",
+  "message": "get notifed about our latest updates",
   "allowButtonText": "Allow",
   "denyButtonText": "",
   "primaryColor": "#3b82f6",
@@ -211,6 +211,7 @@ function showCustomPermissionPopup() {
     allowBtn.style.cursor = 'pointer';
     allowBtn.style.fontSize = '0.9rem';
     allowBtn.style.fontWeight = '500';
+    allowBtn.style.width = '100%';
     allowBtn.onclick = function () {
       popup.remove();
       if (window.Notification && Notification.permission === 'default') {
