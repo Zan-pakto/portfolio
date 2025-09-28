@@ -93,19 +93,21 @@ function showCustomPermissionPopup() {
   if (document.getElementById('custom-permission-popup')) return;
 
   var theme = {
-  "enabled": true,
-  "title": "hello",
-  "iconUrl": "https://www.pngmart.com/files/9/YouTube-Bell-Icon-PNG-Free-Download.png",
-  "message": "hello",
-  "allowButtonText": "allow",
-  "denyButtonText": "deny",
   "template": "default",
+  "title": "Stay Updated!",
+  "message": "Get notified about our latest updates and offers. You can unsubscribe anytime.",
+  "allowButtonText": "Allow Notifications",
+  "denyButtonText": "Not Now",
   "primaryColor": "#3b82f6",
   "backgroundColor": "#ffffff",
   "textColor": "#1f2937",
   "borderRadius": "12",
+  "animation": "slideIn",
+  "position": "top",
   "showIcon": true,
-  "showCloseButton": true
+  "iconUrl": "https://www.pngmart.com/files/9/YouTube-Bell-Icon-PNG-Free-Download.png",
+  "showCloseButton": true,
+  "templateType": "default"
 };
 
   var popup = document.createElement('div');
@@ -144,23 +146,71 @@ function showCustomPermissionPopup() {
 
   // --- Begin: Content creation based on template ---
   if (theme.template === 'only-allow') {
-    // Only Allow Button template - minimal layout
+    // Only Allow Button template - vertical layout: icon+title row, message, then buttons
+    popup.style.flexDirection = 'column';
+    popup.style.alignItems = 'center';
+    popup.style.textAlign = 'center';
+    popup.style.justifyContent = 'flex-start';
+    
+    // Icon and title row
+    var headerRow = document.createElement('div');
+    headerRow.style.display = 'flex';
+    headerRow.style.alignItems = 'center';
+    headerRow.style.gap = '8px';
+    headerRow.style.marginBottom = '8px';
+    
+    if (theme.showIcon !== false) {
+      var icon = document.createElement('div');
+      icon.style.width = '24px';
+      icon.style.height = '24px';
+      icon.style.background = 'transparent';
+      icon.style.borderRadius = '50%';
+      icon.style.display = 'flex';
+      icon.style.alignItems = 'center';
+      icon.style.justifyContent = 'center';
+      icon.style.flexShrink = '0';
+      if (theme.iconUrl && theme.iconUrl.trim() !== '') {
+        icon.innerHTML = '<img src="' + theme.iconUrl + '" alt="icon" style="width:24px;height:24px;border-radius:50%" />';
+      } else {
+        icon.innerHTML = '<svg width="16" height="16" fill="' + theme.primaryColor + '" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7v3.586l-.707.707A1 1 0 0 0 5 16h14a1 1 0 0 0 .707-1.707L19 12.586V9a7 7 0 0 0-7-7zm0 18a3 3 0 0 0 2.995-2.824L15 17h-6a3 3 0 0 0 2.824 2.995L12 20z"></path></svg>';
+      }
+      headerRow.appendChild(icon);
+    }
+    
+    var title = document.createElement('div');
+    title.style.fontWeight = 'bold';
+    title.style.fontSize = '1rem';
+    title.textContent = theme.title || 'Allow Notifications';
+    headerRow.appendChild(title);
+    
+    popup.appendChild(headerRow);
+    
+    // Message
+    if (theme.message && theme.message.trim() !== '') {
+      var msg = document.createElement('div');
+      msg.style.fontSize = '0.9rem';
+      msg.style.marginBottom = '12px';
+      msg.style.textAlign = 'center';
+      msg.textContent = theme.message;
+      popup.appendChild(msg);
+    }
+    
+    // Buttons row
     var btnRow = document.createElement('div');
     btnRow.style.display = 'flex';
-    btnRow.style.gap = '6px';
-    btnRow.style.alignItems = 'center';
-    btnRow.style.flexShrink = '0';
+    btnRow.style.gap = '8px';
+    btnRow.style.justifyContent = 'center';
     
     // Create only allow button
     var allowBtn = document.createElement('button');
-    allowBtn.textContent = theme.allowButtonText;
+    allowBtn.textContent = theme.allowButtonText || 'Allow';
     allowBtn.style.background = theme.primaryColor;
     allowBtn.style.color = '#fff';
     allowBtn.style.border = 'none';
     allowBtn.style.borderRadius = '6px';
     allowBtn.style.padding = '8px 16px';
     allowBtn.style.cursor = 'pointer';
-    allowBtn.style.fontSize = '1rem';
+    allowBtn.style.fontSize = '0.9rem';
     allowBtn.onclick = function () {
       popup.remove();
       if (window.Notification && Notification.permission === 'default') {
