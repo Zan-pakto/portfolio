@@ -146,23 +146,24 @@ function showCustomPermissionPopup() {
 
   // --- Begin: Content creation based on template ---
   if (theme.template === 'only-allow') {
-    // Only Allow Button template - vertical layout: icon+title row, message, then buttons
+    // Only Allow Button template - vertical layout: icon+title row, message below, button below
     popup.style.flexDirection = 'column';
-    popup.style.alignItems = 'center';
-    popup.style.textAlign = 'center';
+    popup.style.alignItems = 'flex-start';
+    popup.style.textAlign = 'left';
     popup.style.justifyContent = 'flex-start';
     
     // Icon and title row
     var headerRow = document.createElement('div');
     headerRow.style.display = 'flex';
-    headerRow.style.alignItems = 'center';
-    headerRow.style.gap = '8px';
+    headerRow.style.alignItems = 'flex-start';
+    headerRow.style.gap = '12px';
     headerRow.style.marginBottom = '8px';
+    headerRow.style.width = '100%';
     
     if (theme.showIcon !== false) {
       var icon = document.createElement('div');
-      icon.style.width = '24px';
-      icon.style.height = '24px';
+      icon.style.width = '32px';
+      icon.style.height = '32px';
       icon.style.background = 'transparent';
       icon.style.borderRadius = '50%';
       icon.style.display = 'flex';
@@ -170,9 +171,9 @@ function showCustomPermissionPopup() {
       icon.style.justifyContent = 'center';
       icon.style.flexShrink = '0';
       if (theme.iconUrl && theme.iconUrl.trim() !== '') {
-        icon.innerHTML = '<img src="' + theme.iconUrl + '" alt="icon" style="width:24px;height:24px;border-radius:50%" />';
+        icon.innerHTML = '<img src="' + theme.iconUrl + '" alt="icon" style="width:32px;height:32px;border-radius:50%" />';
       } else {
-        icon.innerHTML = '<svg width="16" height="16" fill="' + theme.primaryColor + '" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7v3.586l-.707.707A1 1 0 0 0 5 16h14a1 1 0 0 0 .707-1.707L19 12.586V9a7 7 0 0 0-7-7zm0 18a3 3 0 0 0 2.995-2.824L15 17h-6a3 3 0 0 0 2.824 2.995L12 20z"></path></svg>';
+        icon.innerHTML = '<svg width="20" height="20" fill="' + theme.primaryColor + '" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7v3.586l-.707.707A1 1 0 0 0 5 16h14a1 1 0 0 0 .707-1.707L19 12.586V9a7 7 0 0 0-7-7zm0 18a3 3 0 0 0 2.995-2.824L15 17h-6a3 3 0 0 0 2.824 2.995L12 20z"></path></svg>';
       }
       headerRow.appendChild(icon);
     }
@@ -180,37 +181,36 @@ function showCustomPermissionPopup() {
     var title = document.createElement('div');
     title.style.fontWeight = 'bold';
     title.style.fontSize = '1rem';
+    title.style.lineHeight = '1.3';
+    title.style.flex = '1';
     title.textContent = theme.title || 'Allow Notifications';
     headerRow.appendChild(title);
     
     popup.appendChild(headerRow);
     
-    // Message
+    // Message below title
     if (theme.message && theme.message.trim() !== '') {
       var msg = document.createElement('div');
       msg.style.fontSize = '0.9rem';
-      msg.style.marginBottom = '12px';
-      msg.style.textAlign = 'center';
+      msg.style.marginBottom = '16px';
+      msg.style.color = theme.textColor;
+      msg.style.opacity = '0.8';
+      msg.style.lineHeight = '1.4';
       msg.textContent = theme.message;
       popup.appendChild(msg);
     }
     
-    // Buttons row
-    var btnRow = document.createElement('div');
-    btnRow.style.display = 'flex';
-    btnRow.style.gap = '8px';
-    btnRow.style.justifyContent = 'center';
-    
-    // Create only allow button
+    // Allow button below message
     var allowBtn = document.createElement('button');
     allowBtn.textContent = theme.allowButtonText || 'Allow';
     allowBtn.style.background = theme.primaryColor;
     allowBtn.style.color = '#fff';
     allowBtn.style.border = 'none';
     allowBtn.style.borderRadius = '6px';
-    allowBtn.style.padding = '8px 16px';
+    allowBtn.style.padding = '10px 20px';
     allowBtn.style.cursor = 'pointer';
     allowBtn.style.fontSize = '0.9rem';
+    allowBtn.style.fontWeight = '500';
     allowBtn.onclick = function () {
       popup.remove();
       if (window.Notification && Notification.permission === 'default') {
@@ -222,64 +222,96 @@ function showCustomPermissionPopup() {
       }
     };
     
-    btnRow.appendChild(allowBtn);
-    popup.appendChild(btnRow);
+    popup.appendChild(allowBtn);
     
   } else {
-    // Default template - full layout with icon, title, message, and buttons
-    // Change popup layout to vertical
+    // Default template - vertical layout: icon+title row, message below, buttons below
     popup.style.flexDirection = 'column';
-    popup.style.alignItems = 'center';
-    popup.style.textAlign = 'center';
+    popup.style.alignItems = 'flex-start';
+    popup.style.textAlign = 'left';
     popup.style.justifyContent = 'flex-start';
     
-    if (theme.showIcon) {
+    // Icon and title row
+    var headerRow = document.createElement('div');
+    headerRow.style.display = 'flex';
+    headerRow.style.alignItems = 'flex-start';
+    headerRow.style.gap = '12px';
+    headerRow.style.marginBottom = '8px';
+    headerRow.style.width = '100%';
+    
+    if (theme.showIcon !== false) {
       var icon = document.createElement('div');
-      icon.style.width = '40px';
-      icon.style.height = '40px';
+      icon.style.width = '32px';
+      icon.style.height = '32px';
       icon.style.background = 'transparent';
       icon.style.borderRadius = '50%';
       icon.style.display = 'flex';
       icon.style.alignItems = 'center';
       icon.style.justifyContent = 'center';
-      icon.style.marginBottom = '12px';
+      icon.style.flexShrink = '0';
       if (theme.iconUrl && theme.iconUrl.trim() !== '') {
-        icon.innerHTML = '<img src="' + theme.iconUrl + '" alt="icon" style="width:40px;height:40px;border-radius:50%" />';
+        icon.innerHTML = '<img src="' + theme.iconUrl + '" alt="icon" style="width:32px;height:32px;border-radius:50%" />';
       } else {
-        icon.innerHTML = '<svg width="24" height="24" fill="' + theme.primaryColor + '" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7v3.586l-.707.707A1 1 0 0 0 5 16h14a1 1 0 0 0 .707-1.707L19 12.586V9a7 7 0 0 0-7-7zm0 18a3 3 0 0 0 2.995-2.824L15 17h-6a3 3 0 0 0 2.824 2.995L12 20z"></path></svg>';
+        icon.innerHTML = '<svg width="20" height="20" fill="' + theme.primaryColor + '" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7v3.586l-.707.707A1 1 0 0 0 5 16h14a1 1 0 0 0 .707-1.707L19 12.586V9a7 7 0 0 0-7-7zm0 18a3 3 0 0 0 2.995-2.824L15 17h-6a3 3 0 0 0 2.824 2.995L12 20z"></path></svg>';
       }
-      popup.appendChild(icon);
+      headerRow.appendChild(icon);
     }
     
     var title = document.createElement('div');
     title.style.fontWeight = 'bold';
-    title.style.fontSize = '1.1rem';
-    title.style.marginBottom = '8px';
-    title.textContent = theme.title;
-    popup.appendChild(title);
+    title.style.fontSize = '1rem';
+    title.style.lineHeight = '1.3';
+    title.style.flex = '1';
+    title.textContent = theme.title || 'Allow Notifications';
+    headerRow.appendChild(title);
     
-    var msg = document.createElement('div');
-    msg.style.fontSize = '0.97rem';
-    msg.style.marginBottom = '18px';
-    msg.style.textAlign = 'center';
-    msg.textContent = theme.message;
-    popup.appendChild(msg);
+    popup.appendChild(headerRow);
     
+    // Message below title
+    if (theme.message && theme.message.trim() !== '') {
+      var msg = document.createElement('div');
+      msg.style.fontSize = '0.9rem';
+      msg.style.marginBottom = '16px';
+      msg.style.color = theme.textColor;
+      msg.style.opacity = '0.8';
+      msg.style.lineHeight = '1.4';
+      msg.textContent = theme.message;
+      popup.appendChild(msg);
+    }
+    
+    // Buttons below message
     var btnRow = document.createElement('div');
     btnRow.style.display = 'flex';
     btnRow.style.gap = '10px';
-    btnRow.style.marginBottom = '8px';
+    btnRow.style.width = '100%';
+    
+    // Create deny button (only for default template)
+    if (theme.denyButtonText && theme.denyButtonText.trim() !== '') {
+      var denyBtn = document.createElement('button');
+      denyBtn.textContent = theme.denyButtonText;
+      denyBtn.style.background = 'transparent';
+      denyBtn.style.color = theme.textColor;
+      denyBtn.style.border = '1px solid ' + theme.textColor + '40';
+      denyBtn.style.borderRadius = '6px';
+      denyBtn.style.padding = '10px 20px';
+      denyBtn.style.cursor = 'pointer';
+      denyBtn.style.fontSize = '0.9rem';
+      denyBtn.style.fontWeight = '500';
+      denyBtn.onclick = function () { popup.remove(); };
+      btnRow.appendChild(denyBtn);
+    }
     
     // Create allow button
     var allowBtn = document.createElement('button');
-    allowBtn.textContent = theme.allowButtonText;
+    allowBtn.textContent = theme.allowButtonText || 'Allow';
     allowBtn.style.background = theme.primaryColor;
     allowBtn.style.color = '#fff';
     allowBtn.style.border = 'none';
     allowBtn.style.borderRadius = '6px';
-    allowBtn.style.padding = '8px 16px';
+    allowBtn.style.padding = '10px 20px';
     allowBtn.style.cursor = 'pointer';
-    allowBtn.style.fontSize = '1rem';
+    allowBtn.style.fontSize = '0.9rem';
+    allowBtn.style.fontWeight = '500';
     allowBtn.onclick = function () {
       popup.remove();
       if (window.Notification && Notification.permission === 'default') {
@@ -290,21 +322,6 @@ function showCustomPermissionPopup() {
         });
       }
     };
-    
-    // Create deny button (only for default template)
-    if (theme.denyButtonText && theme.denyButtonText.trim() !== '') {
-      var denyBtn = document.createElement('button');
-      denyBtn.textContent = theme.denyButtonText;
-      denyBtn.style.background = '#e5e7eb';
-      denyBtn.style.color = theme.textColor;
-      denyBtn.style.border = 'none';
-      denyBtn.style.borderRadius = '6px';
-      denyBtn.style.padding = '8px 16px';
-      denyBtn.style.cursor = 'pointer';
-      denyBtn.style.fontSize = '1rem';
-      denyBtn.onclick = function () { popup.remove(); };
-      btnRow.appendChild(denyBtn);
-    }
     
     btnRow.appendChild(allowBtn);
     popup.appendChild(btnRow);
