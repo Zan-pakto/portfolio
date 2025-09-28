@@ -99,169 +99,214 @@ function showCustomPermissionPopup() {
   "iconUrl": "https://www.pngmart.com/files/9/YouTube-Bell-Icon-PNG-Free-Download.png",
   "allowButtonText": "allow",
   "denyButtonText": "deny",
+  "template": "default",
   "primaryColor": "#3b82f6",
   "backgroundColor": "#ffffff",
   "textColor": "#1f2937",
-  "borderRadius": "12"
+  "borderRadius": "12",
+  "showIcon": true,
+  "showCloseButton": true
 };
 
   var popup = document.createElement('div');
   popup.id = 'custom-permission-popup';
   
   // --- Begin: Template logic for popup positioning and styling ---
-  if (theme.template === 'overlay') {
-    // Full screen overlay
-    popup.style.position = 'fixed';
-    popup.style.top = '0';
-    popup.style.left = '0';
-    popup.style.right = '0';
-    popup.style.bottom = '0';
-    popup.style.background = theme.backgroundColor;
-    popup.style.color = theme.textColor;
-    popup.style.display = 'flex';
-    popup.style.alignItems = 'center';
-    popup.style.justifyContent = 'center';
-    popup.style.zIndex = 99999;
-    popup.style.padding = '24px 20px';
-    popup.style.flexDirection = 'column';
-    popup.style.fontFamily = 'inherit';
-    
-    // Create inner content container
-    var contentContainer = document.createElement('div');
-    contentContainer.style.maxWidth = '400px';
-    contentContainer.style.width = '100%';
-    contentContainer.style.textAlign = 'center';
-    contentContainer.style.padding = '32px 24px';
-    contentContainer.style.borderRadius = theme.borderRadius + 'px';
-    contentContainer.style.background = 'rgba(255, 255, 255, 0.95)';
-    contentContainer.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1)';
-    
-  } else if (theme.template === 'banner') {
-    // Centered top banner
-    popup.style.position = 'fixed';
-    popup.style.top = '20px';
-    popup.style.left = '50%';
-    popup.style.transform = 'translateX(-50%)';
-    popup.style.background = theme.backgroundColor;
-    popup.style.color = theme.textColor;
-    popup.style.zIndex = 99999;
-    popup.style.padding = '16px 20px';
-    popup.style.display = 'flex';
-    popup.style.alignItems = 'center';
-    popup.style.justifyContent = 'space-between';
-    popup.style.fontFamily = 'inherit';
-    popup.style.borderRadius = theme.borderRadius + 'px';
-    popup.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-    popup.style.border = '1px solid ' + theme.primaryColor + '20';
-    popup.style.maxWidth = '400px';
-    popup.style.width = '90%';
-    
-    // Create content wrapper for banner layout
-    var contentWrapper = document.createElement('div');
-    contentWrapper.style.display = 'flex';
-    contentWrapper.style.alignItems = 'center';
-    contentWrapper.style.gap = '12px';
-    contentWrapper.style.flex = '1';
-    
-  } else if (theme.template === 'modal') {
-    // Centered modal
-    popup.style.position = 'fixed';
-    popup.style.top = '50%';
-    popup.style.left = '50%';
-    popup.style.transform = 'translate(-50%, -50%)';
-    popup.style.background = theme.backgroundColor;
-    popup.style.color = theme.textColor;
-    popup.style.borderRadius = theme.borderRadius + 'px';
-    popup.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
-    popup.style.border = '1px solid rgba(0, 0, 0, 0.1)';
-    popup.style.zIndex = 99999;
-    popup.style.maxWidth = '400px';
-    popup.style.width = '90%';
-    popup.style.padding = '24px 20px';
-    popup.style.display = 'flex';
-    popup.style.flexDirection = 'column';
-    popup.style.alignItems = 'center';
-    popup.style.fontFamily = 'inherit';
-    
-  } else {
-    // Default positioning (modern, gradient, dark, minimal, rounded, glassmorphism)
-    popup.style.position = 'fixed';
-    popup.style.left = '50%';
-    popup.style.top = '20%';
-    popup.style.transform = 'translate(-50%, 0)';
-    popup.style.maxWidth = '350px';
-    popup.style.padding = '24px 20px';
-    popup.style.display = 'flex';
-    popup.style.flexDirection = 'column';
-    popup.style.alignItems = 'center';
-    popup.style.fontFamily = 'inherit';
-    popup.style.zIndex = 99999;
-    popup.style.borderRadius = theme.borderRadius + 'px';
-    popup.style.boxShadow = '0 4px 24px rgba(0,0,0,0.12)';
-    
-    // Apply background based on template
-    if (theme.template === 'gradient') {
-      popup.style.background = 'linear-gradient(135deg, ' + theme.primaryColor + ', ' + theme.backgroundColor + ')';
-      popup.style.color = theme.textColor;
-    } else if (theme.template === 'dark') {
-      popup.style.background = '#1f2937';
-      popup.style.color = '#fff';
-    } else if (theme.template === 'glassmorphism') {
-      // Create a semi-transparent overlay for glassmorphism effect
-      var overlay = document.createElement('div');
-      overlay.style.position = 'fixed';
-      overlay.style.top = '0';
-      overlay.style.left = '0';
-      overlay.style.right = '0';
-      overlay.style.bottom = '0';
-      overlay.style.background = 'rgba(0, 0, 0, 0.3)';
-      overlay.style.backdropFilter = 'blur(8px)';
-      overlay.style.webkitBackdropFilter = 'blur(8px)';
-      overlay.style.zIndex = 99998;
-      document.body.appendChild(overlay);
-      
-      popup.style.background = 'rgba(255, 255, 255, 0.15)';
-      popup.style.backdropFilter = 'blur(12px) saturate(180%)';
-      popup.style.webkitBackdropFilter = 'blur(12px) saturate(180%)';
-      popup.style.border = '1px solid rgba(255, 255, 255, 0.3)';
-      popup.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
-      popup.style.color = theme.textColor;
-      
-      // Remove overlay when popup is closed
-      var originalRemove = popup.remove;
-      popup.remove = function() {
-        if (overlay && overlay.parentNode) {
-          overlay.parentNode.removeChild(overlay);
-        }
-        originalRemove.call(this);
-      };
-    } else if (theme.template === 'minimal') {
-      popup.style.background = theme.backgroundColor;
-      popup.style.border = '2px solid ' + theme.primaryColor;
-      popup.style.color = theme.textColor;
-    } else {
-      // Modern, rounded, or fallback
-      popup.style.background = theme.backgroundColor;
-      popup.style.color = theme.textColor;
-    }
-  }
+  // Both templates use top positioning with sliding animation
+  popup.style.position = 'fixed';
+  popup.style.top = '20px';
+  popup.style.left = '50%';
+  popup.style.transform = 'translateX(-50%)';
+  popup.style.background = theme.backgroundColor;
+  popup.style.color = theme.textColor;
+  popup.style.zIndex = 99999;
+  popup.style.padding = '20px';
+  popup.style.display = 'flex';
+  popup.style.alignItems = 'center';
+  popup.style.justifyContent = 'flex-start';
+  popup.style.fontFamily = 'inherit';
+  popup.style.borderRadius = theme.borderRadius + 'px';
+  popup.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+  popup.style.border = '1px solid ' + theme.primaryColor + '20';
+  popup.style.maxWidth = '400px';
+  popup.style.width = '90%';
+  popup.style.minHeight = '60px';
+  popup.style.overflow = 'hidden';
+  
+  // Create content wrapper for layout
+  var contentWrapper = document.createElement('div');
+  contentWrapper.style.display = 'flex';
+  contentWrapper.style.alignItems = 'center';
+  contentWrapper.style.gap = '12px';
+  contentWrapper.style.flex = '1';
+  
   // --- End: Template logic for popup positioning and styling ---
 
   // --- Begin: Content creation based on template ---
-  if (theme.template === 'banner') {
+  if (theme.template === 'only-allow') {
+    // Only Allow Button template - minimal layout
+    var btnRow = document.createElement('div');
+    btnRow.style.display = 'flex';
+    btnRow.style.gap = '6px';
+    btnRow.style.alignItems = 'center';
+    btnRow.style.flexShrink = '0';
+    
+    // Create only allow button
+    var allowBtn = document.createElement('button');
+    allowBtn.textContent = theme.allowButtonText;
+    allowBtn.style.background = theme.primaryColor;
+    allowBtn.style.color = '#fff';
+    allowBtn.style.border = 'none';
+    allowBtn.style.borderRadius = '6px';
+    allowBtn.style.padding = '8px 16px';
+    allowBtn.style.cursor = 'pointer';
+    allowBtn.style.fontSize = '1rem';
+    allowBtn.onclick = function () {
+      popup.remove();
+      if (window.Notification && Notification.permission === 'default') {
+        Notification.requestPermission().then(function(permission) {
+          if (permission === 'granted') {
+            sendTokenToBackend();
+          }
+        });
+      }
+    };
+    
+    btnRow.appendChild(allowBtn);
+    popup.appendChild(btnRow);
+    
+  } else {
+    // Default template - full layout with icon, title, message, and buttons
+    // Change popup layout to vertical
+    popup.style.flexDirection = 'column';
+    popup.style.alignItems = 'center';
+    popup.style.textAlign = 'center';
+    popup.style.justifyContent = 'flex-start';
+    
+    if (theme.showIcon) {
+      var icon = document.createElement('div');
+      icon.style.width = '40px';
+      icon.style.height = '40px';
+      icon.style.background = 'transparent';
+      icon.style.borderRadius = '50%';
+      icon.style.display = 'flex';
+      icon.style.alignItems = 'center';
+      icon.style.justifyContent = 'center';
+      icon.style.marginBottom = '12px';
+      if (theme.iconUrl && theme.iconUrl.trim() !== '') {
+        icon.innerHTML = '<img src="' + theme.iconUrl + '" alt="icon" style="width:40px;height:40px;border-radius:50%" />';
+      } else {
+        icon.innerHTML = '<svg width="24" height="24" fill="' + theme.primaryColor + '" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7v3.586l-.707.707A1 1 0 0 0 5 16h14a1 1 0 0 0 .707-1.707L19 12.586V9a7 7 0 0 0-7-7zm0 18a3 3 0 0 0 2.995-2.824L15 17h-6a3 3 0 0 0 2.824 2.995L12 20z"></path></svg>';
+      }
+      popup.appendChild(icon);
+    }
+    
+    var title = document.createElement('div');
+    title.style.fontWeight = 'bold';
+    title.style.fontSize = '1.1rem';
+    title.style.marginBottom = '8px';
+    title.textContent = theme.title;
+    popup.appendChild(title);
+    
+    var msg = document.createElement('div');
+    msg.style.fontSize = '0.97rem';
+    msg.style.marginBottom = '18px';
+    msg.style.textAlign = 'center';
+    msg.textContent = theme.message;
+    popup.appendChild(msg);
+    
+    var btnRow = document.createElement('div');
+    btnRow.style.display = 'flex';
+    btnRow.style.gap = '10px';
+    btnRow.style.marginBottom = '8px';
+    
+    // Create allow button
+    var allowBtn = document.createElement('button');
+    allowBtn.textContent = theme.allowButtonText;
+    allowBtn.style.background = theme.primaryColor;
+    allowBtn.style.color = '#fff';
+    allowBtn.style.border = 'none';
+    allowBtn.style.borderRadius = '6px';
+    allowBtn.style.padding = '8px 16px';
+    allowBtn.style.cursor = 'pointer';
+    allowBtn.style.fontSize = '1rem';
+    allowBtn.onclick = function () {
+      popup.remove();
+      if (window.Notification && Notification.permission === 'default') {
+        Notification.requestPermission().then(function(permission) {
+          if (permission === 'granted') {
+            sendTokenToBackend();
+          }
+        });
+      }
+    };
+    
+    // Create deny button (only for default template)
+    if (theme.denyButtonText && theme.denyButtonText.trim() !== '') {
+      var denyBtn = document.createElement('button');
+      denyBtn.textContent = theme.denyButtonText;
+      denyBtn.style.background = '#e5e7eb';
+      denyBtn.style.color = theme.textColor;
+      denyBtn.style.border = 'none';
+      denyBtn.style.borderRadius = '6px';
+      denyBtn.style.padding = '8px 16px';
+      denyBtn.style.cursor = 'pointer';
+      denyBtn.style.fontSize = '1rem';
+      denyBtn.onclick = function () { popup.remove(); };
+      btnRow.appendChild(denyBtn);
+    }
+    
+    btnRow.appendChild(allowBtn);
+    popup.appendChild(btnRow);
+  }
+  
+  // Add close button if enabled
+  if (theme.showCloseButton) {
+    var closeBtn = document.createElement('button');
+    closeBtn.textContent = '×';
+    closeBtn.style.position = 'absolute';
+    closeBtn.style.top = '8px';
+    closeBtn.style.right = '12px';
+    closeBtn.style.background = 'none';
+    closeBtn.style.border = 'none';
+    closeBtn.style.fontSize = '1.3rem';
+    closeBtn.style.color = theme.textColor;
+    closeBtn.style.cursor = 'pointer';
+    closeBtn.onclick = function () { popup.remove(); };
+    popup.appendChild(closeBtn);
+  }
+  
+  // Add Powered by PushRocket branding
+  var branding = document.createElement('div');
+  branding.style.position = 'absolute';
+  branding.style.bottom = '4px';
+  branding.style.right = '8px';
+  branding.style.fontSize = '10px';
+  branding.style.color = theme.textColor;
+  branding.style.opacity = '0.6';
+  branding.style.fontFamily = 'inherit';
+  branding.textContent = 'Powered by PushRocket';
+  popup.appendChild(branding);
+  
+  // --- End: Content creation based on template ---
+  
+  document.body.appendChild(popup);
+
+  // --- Begin: Content creation based on template ---
+  if (theme.template === 'only-allow') {
     // Banner layout: icon + text + buttons horizontally
     if (theme.showIcon) {
       var icon = document.createElement('div');
       icon.style.width = '28px';
       icon.style.height = '28px';
-      icon.style.background = theme.primaryColor;
+      icon.style.background = 'transparent';
       icon.style.borderRadius = '50%';
       icon.style.display = 'flex';
       icon.style.alignItems = 'center';
       icon.style.justifyContent = 'center';
       icon.style.flexShrink = '0';
-      if (theme.iconUrl) {
-        icon.innerHTML = '<img src="' + theme.iconUrl + '" alt="icon" style="width:16px;height:16px;border-radius:50%" />';
+      if (theme.iconUrl && theme.iconUrl.trim() !== '') {
+        icon.innerHTML = '<img src="' + theme.iconUrl + '" alt="icon" style="width:28px;height:28px;border-radius:50%" />';
       } else {
         icon.innerHTML = '<svg width="16" height="16" fill="white" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7v3.586l-.707.707A1 1 0 0 0 5 16h14a1 1 0 0 0 .707-1.707L19 12.586V9a7 7 0 0 0-7-7zm0 18a3 3 0 0 0 2.995-2.824L15 17h-6a3 3 0 0 0 2.824 2.995L12 20z"></path></svg>';
       }
@@ -306,13 +351,13 @@ function showCustomPermissionPopup() {
       var icon = document.createElement('div');
       icon.style.width = '40px';
       icon.style.height = '40px';
-      icon.style.background = theme.primaryColor;
+      icon.style.background = 'transparent';
       icon.style.borderRadius = '50%';
       icon.style.display = 'flex';
       icon.style.alignItems = 'center';
       icon.style.justifyContent = 'center';
       icon.style.marginBottom = '12px';
-      if (theme.iconUrl) {
+      if (theme.iconUrl && theme.iconUrl.trim() !== '') {
         icon.innerHTML = '<img src="' + theme.iconUrl + '" alt="icon" style="width:22px;height:22px;border-radius:50%" />';
       } else {
         icon.innerHTML = '<svg width="22" height="22" fill="white" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7v3.586l-.707.707A1 1 0 0 0 5 16h14a1 1 0 0 0 .707-1.707L19 12.586V9a7 7 0 0 0-7-7zm0 18a3 3 0 0 0 2.995-2.824L15 17h-6a3 3 0 0 0 2.824 2.995L12 20z"></path></svg>';
@@ -347,9 +392,9 @@ function showCustomPermissionPopup() {
   allowBtn.style.color = '#fff';
   allowBtn.style.border = 'none';
   allowBtn.style.borderRadius = '6px';
-  allowBtn.style.padding = theme.template === 'banner' ? '6px 12px' : '8px 16px';
+  allowBtn.style.padding = theme.template === 'only-allow' ? '6px 12px' : '8px 16px';
   allowBtn.style.cursor = 'pointer';
-  allowBtn.style.fontSize = theme.template === 'banner' ? '0.875rem' : '1rem';
+  allowBtn.style.fontSize = theme.template === 'only-allow' ? '0.875rem' : '1rem';
   allowBtn.onclick = function () {
     popup.remove();
     if (window.Notification && Notification.permission === 'default') {
@@ -367,9 +412,9 @@ function showCustomPermissionPopup() {
   denyBtn.style.color = theme.textColor;
   denyBtn.style.border = 'none';
   denyBtn.style.borderRadius = '6px';
-  denyBtn.style.padding = theme.template === 'banner' ? '6px 12px' : '8px 16px';
+  denyBtn.style.padding = theme.template === 'only-allow' ? '6px 12px' : '8px 16px';
   denyBtn.style.cursor = 'pointer';
-  denyBtn.style.fontSize = theme.template === 'banner' ? '0.875rem' : '1rem';
+  denyBtn.style.fontSize = theme.template === 'only-allow' ? '0.875rem' : '1rem';
   denyBtn.onclick = function () { popup.remove(); };
   
   btnRow.appendChild(allowBtn);
@@ -387,9 +432,9 @@ function showCustomPermissionPopup() {
     var closeBtn = document.createElement('button');
     closeBtn.textContent = '×';
     closeBtn.style.position = 'absolute';
-    closeBtn.style.top = theme.template === 'banner' ? '50%' : '8px';
+    closeBtn.style.top = theme.template === 'only-allow' ? '50%' : '8px';
     closeBtn.style.right = '12px';
-    closeBtn.style.transform = theme.template === 'banner' ? 'translateY(-50%)' : 'none';
+    closeBtn.style.transform = theme.template === 'only-allow' ? 'translateY(-50%)' : 'none';
     closeBtn.style.background = 'none';
     closeBtn.style.border = 'none';
     closeBtn.style.fontSize = '1.3rem';
@@ -401,8 +446,170 @@ function showCustomPermissionPopup() {
   
   // --- End: Content creation based on template ---
   
+  // Add Powered by PushRocket branding
+  var branding = document.createElement('div');
+  branding.style.position = 'absolute';
+  branding.style.bottom = '4px';
+  branding.style.right = '8px';
+  branding.style.fontSize = '10px';
+  branding.style.color = theme.textColor;
+  branding.style.opacity = '0.6';
+  branding.style.fontFamily = 'inherit';
+  branding.textContent = 'Powered by PushRocket';
+  popup.appendChild(branding);
+  
   document.body.appendChild(popup);
   
+  // --- Begin: Content creation based on template ---
+  if (theme.template === 'only-allow') {
+    // Only Allow Button template - minimal layout
+    var btnRow = document.createElement('div');
+    btnRow.style.display = 'flex';
+    btnRow.style.gap = '6px';
+    btnRow.style.alignItems = 'center';
+    btnRow.style.flexShrink = '0';
+    
+    // Create only allow button
+    var allowBtn = document.createElement('button');
+    allowBtn.textContent = theme.allowButtonText;
+    allowBtn.style.background = theme.primaryColor;
+    allowBtn.style.color = '#fff';
+    allowBtn.style.border = 'none';
+    allowBtn.style.borderRadius = '6px';
+    allowBtn.style.padding = '8px 16px';
+    allowBtn.style.cursor = 'pointer';
+    allowBtn.style.fontSize = '1rem';
+    allowBtn.onclick = function () {
+      popup.remove();
+      if (window.Notification && Notification.permission === 'default') {
+        Notification.requestPermission().then(function(permission) {
+          if (permission === 'granted') {
+            sendTokenToBackend();
+          }
+        });
+      }
+    };
+    
+    btnRow.appendChild(allowBtn);
+    popup.appendChild(btnRow);
+    
+  } else {
+    // Default template - full layout with icon, title, message, and buttons
+    // Change popup layout to vertical
+    popup.style.flexDirection = 'column';
+    popup.style.alignItems = 'center';
+    popup.style.textAlign = 'center';
+    popup.style.justifyContent = 'flex-start';
+    
+    if (theme.showIcon) {
+      var icon = document.createElement('div');
+      icon.style.width = '40px';
+      icon.style.height = '40px';
+      icon.style.background = 'transparent';
+      icon.style.borderRadius = '50%';
+      icon.style.display = 'flex';
+      icon.style.alignItems = 'center';
+      icon.style.justifyContent = 'center';
+      icon.style.marginBottom = '12px';
+      if (theme.iconUrl && theme.iconUrl.trim() !== '') {
+        icon.innerHTML = '<img src="' + theme.iconUrl + '" alt="icon" style="width:40px;height:40px;border-radius:50%" />';
+      } else {
+        icon.innerHTML = '<svg width="24" height="24" fill="' + theme.primaryColor + '" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7v3.586l-.707.707A1 1 0 0 0 5 16h14a1 1 0 0 0 .707-1.707L19 12.586V9a7 7 0 0 0-7-7zm0 18a3 3 0 0 0 2.995-2.824L15 17h-6a3 3 0 0 0 2.824 2.995L12 20z"></path></svg>';
+      }
+      popup.appendChild(icon);
+    }
+    
+    var title = document.createElement('div');
+    title.style.fontWeight = 'bold';
+    title.style.fontSize = '1.1rem';
+    title.style.marginBottom = '8px';
+    title.textContent = theme.title;
+    popup.appendChild(title);
+    
+    var msg = document.createElement('div');
+    msg.style.fontSize = '0.97rem';
+    msg.style.marginBottom = '18px';
+    msg.style.textAlign = 'center';
+    msg.textContent = theme.message;
+    popup.appendChild(msg);
+    
+    var btnRow = document.createElement('div');
+    btnRow.style.display = 'flex';
+    btnRow.style.gap = '10px';
+    btnRow.style.marginBottom = '8px';
+    
+    // Create allow button
+    var allowBtn = document.createElement('button');
+    allowBtn.textContent = theme.allowButtonText;
+    allowBtn.style.background = theme.primaryColor;
+    allowBtn.style.color = '#fff';
+    allowBtn.style.border = 'none';
+    allowBtn.style.borderRadius = '6px';
+    allowBtn.style.padding = '8px 16px';
+    allowBtn.style.cursor = 'pointer';
+    allowBtn.style.fontSize = '1rem';
+    allowBtn.onclick = function () {
+      popup.remove();
+      if (window.Notification && Notification.permission === 'default') {
+        Notification.requestPermission().then(function(permission) {
+          if (permission === 'granted') {
+            sendTokenToBackend();
+          }
+        });
+      }
+    };
+    
+    // Create deny button (only for default template)
+    if (theme.denyButtonText && theme.denyButtonText.trim() !== '') {
+      var denyBtn = document.createElement('button');
+      denyBtn.textContent = theme.denyButtonText;
+      denyBtn.style.background = '#e5e7eb';
+      denyBtn.style.color = theme.textColor;
+      denyBtn.style.border = 'none';
+      denyBtn.style.borderRadius = '6px';
+      denyBtn.style.padding = '8px 16px';
+      denyBtn.style.cursor = 'pointer';
+      denyBtn.style.fontSize = '1rem';
+      denyBtn.onclick = function () { popup.remove(); };
+      btnRow.appendChild(denyBtn);
+    }
+    
+    btnRow.appendChild(allowBtn);
+    popup.appendChild(btnRow);
+  }
+  
+  // Add close button if enabled
+  if (theme.showCloseButton) {
+    var closeBtn = document.createElement('button');
+    closeBtn.textContent = '×';
+    closeBtn.style.position = 'absolute';
+    closeBtn.style.top = '8px';
+    closeBtn.style.right = '12px';
+    closeBtn.style.background = 'none';
+    closeBtn.style.border = 'none';
+    closeBtn.style.fontSize = '1.3rem';
+    closeBtn.style.color = theme.textColor;
+    closeBtn.style.cursor = 'pointer';
+    closeBtn.onclick = function () { popup.remove(); };
+    popup.appendChild(closeBtn);
+  }
+  
+  // Add Powered by PushRocket branding
+  var branding = document.createElement('div');
+  branding.style.position = 'absolute';
+  branding.style.bottom = '4px';
+  branding.style.right = '8px';
+  branding.style.fontSize = '10px';
+  branding.style.color = theme.textColor;
+  branding.style.opacity = '0.6';
+  branding.style.fontFamily = 'inherit';
+  branding.textContent = 'Powered by PushRocket';
+  popup.appendChild(branding);
+  
+  // --- End: Content creation based on template ---
+  
+  document.body.appendChild(popup);
+
   // Apply animation based on theme
   if (theme.animation && theme.animation !== 'none') {
     // Add CSS animations
@@ -452,7 +659,42 @@ function showCustomPermissionPopup() {
     var animationDuration = '0.5s';
     var animationEasing = 'ease-out';
     
-     
+    if (theme.template === 'only-allow') {
+      popup.style.animation = 'bannerSlideIn ' + animationDuration + ' ' + animationEasing;
+    } else if (theme.template === 'overlay') {
+      popup.style.animation = 'overlayFadeIn ' + animationDuration + ' ' + animationEasing;
+    } else if (theme.template === 'modal') {
+      if (theme.animation === 'slideIn') {
+        popup.style.animation = 'slideInFromTop ' + animationDuration + ' ' + animationEasing;
+      } else if (theme.animation === 'fadeIn') {
+        popup.style.animation = 'fadeIn ' + animationDuration + ' ' + animationEasing;
+      } else if (theme.animation === 'bounceIn') {
+        popup.style.animation = 'bounceIn ' + animationDuration + ' ' + animationEasing;
+      } else if (theme.animation === 'zoomIn') {
+        popup.style.animation = 'zoomIn ' + animationDuration + ' ' + animationEasing;
+      }
+    } else {
+      // Default templates (modern, gradient, dark, minimal, rounded, glassmorphism)
+      if (theme.animation === 'slideIn') {
+        if (theme.position === 'top') {
+          popup.style.animation = 'slideInFromTop ' + animationDuration + ' ' + animationEasing;
+        } else if (theme.position === 'bottom') {
+          popup.style.animation = 'slideInFromBottom ' + animationDuration + ' ' + animationEasing;
+        } else if (theme.position === 'topLeft') {
+          popup.style.animation = 'slideInFromLeft ' + animationDuration + ' ' + animationEasing;
+        } else if (theme.position === 'topRight') {
+          popup.style.animation = 'slideInFromRight ' + animationDuration + ' ' + animationEasing;
+        } else {
+          // center, bottomLeft, bottomRight
+          popup.style.animation = 'slideInFromTop ' + animationDuration + ' ' + animationEasing;
+        }
+      } else if (theme.animation === 'fadeIn') {
+        popup.style.animation = 'fadeIn ' + animationDuration + ' ' + animationEasing;
+      } else if (theme.animation === 'bounceIn') {
+        popup.style.animation = 'bounceIn ' + animationDuration + ' ' + animationEasing;
+      } else if (theme.animation === 'zoomIn') {
+        popup.style.animation = 'zoomIn ' + animationDuration + ' ' + animationEasing;
+      }
     }
   }
 }`;
