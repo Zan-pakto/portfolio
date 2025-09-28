@@ -94,8 +94,8 @@ function showCustomPermissionPopup() {
 
   var theme = {
   "template": "only-allow",
-  "title": "wanna stay updated",
-  "message": "get notified about our updates",
+  "title": "stay updated",
+  "message": "get notified byyy us",
   "allowButtonText": "Allow",
   "denyButtonText": "",
   "primaryColor": "#3b82f6",
@@ -104,7 +104,7 @@ function showCustomPermissionPopup() {
   "borderRadius": "8",
   "animation": "slideIn",
   "position": "top",
-  "showIcon": false,
+  "showIcon": true,
   "iconUrl": "https://www.pngmart.com/files/9/YouTube-Bell-Icon-PNG-Free-Download.png",
   "showCloseButton": false,
   "templateType": "only-allow"
