@@ -94,11 +94,11 @@ function showCustomPermissionPopup() {
 
   var theme = {
   "enabled": true,
-  "title": "asdfasdf",
-  "message": "checking",
+  "title": "CEHCKING",
+  "message": "CDACDACASDF",
+  "allowButtonText": "ALLOW",
+  "denyButtonText": "DENY",
   "iconUrl": "https://www.pngmart.com/files/9/YouTube-Bell-Icon-PNG-Free-Download.png",
-  "allowButtonText": "adfa",
-  "denyButtonText": "asdf",
   "template": "default",
   "primaryColor": "#3b82f6",
   "backgroundColor": "#ffffff",
@@ -181,6 +181,7 @@ function showCustomPermissionPopup() {
     popup.style.flexDirection = 'column';
     popup.style.alignItems = 'center';
     popup.style.textAlign = 'center';
+    popup.style.justifyContent = 'flex-start';
     
     if (theme.showIcon) {
       var icon = document.createElement('div');
