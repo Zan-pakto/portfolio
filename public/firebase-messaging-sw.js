@@ -55,7 +55,7 @@ onBackgroundMessage(messaging, async (payload) => {
 
   // Track received
   if (payload.data?.notificationId) {
-    fetch("http://192.168.1.6:4000/api/notifications/track", {
+    fetch("http://192.168.1.7:5000/api/notifications/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -76,7 +76,7 @@ self.addEventListener("notificationclick", (event) => {
   console.log("Raw URL from notification:", rawUrl);
 
   if (notificationId) {
-    fetch("http://192.168.1.6:4000/api/clicks/track", {
+    fetch("http://192.168.1.7:5000/api/clicks/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ notificationId, url: rawUrl }),
