@@ -347,11 +347,13 @@ function showCustomPermissionPopup() {
   var branding = document.createElement('div');
   branding.style.position = 'absolute';
   branding.style.bottom = '4px';
-  branding.style.right = '8px';
+  branding.style.left = '50%';
+  branding.style.transform = 'translateX(-50%)';
   branding.style.fontSize = '10px';
   branding.style.color = theme.textColor;
   branding.style.opacity = '0.6';
   branding.style.fontFamily = 'inherit';
+  branding.style.textAlign = 'center';
   branding.textContent = 'Powered by PushRocket';
   popup.appendChild(branding);
   
