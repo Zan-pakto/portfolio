@@ -95,7 +95,7 @@ function showCustomPermissionPopup() {
   var theme = {
   "enabled": true,
   "title": "hello",
-  "message": "asdf",
+  "message": "asdfasdfasdf",
   "iconUrl": "https://www.pngmart.com/files/9/YouTube-Bell-Icon-PNG-Free-Download.png",
   "allowButtonText": "allow",
   "denyButtonText": "deny",
