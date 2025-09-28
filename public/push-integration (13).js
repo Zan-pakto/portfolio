@@ -94,11 +94,11 @@ function showCustomPermissionPopup() {
 
   var theme = {
   "enabled": true,
-  "title": "cehckldfasdasdf",
-  "message": "fasdfasdfasfacasfgasdfasfasdfas",
-  "allowButtonText": "allow",
-  "denyButtonText": "asdf",
+  "title": "asdfasdf",
+  "message": "asdfasdfasdfasfasdfasdfasdfaf",
   "iconUrl": "https://www.pngmart.com/files/9/YouTube-Bell-Icon-PNG-Free-Download.png",
+  "allowButtonText": "adfa",
+  "denyButtonText": "asdf",
   "template": "default",
   "primaryColor": "#3b82f6",
   "backgroundColor": "#ffffff",
@@ -123,7 +123,7 @@ function showCustomPermissionPopup() {
   popup.style.padding = '20px';
   popup.style.display = 'flex';
   popup.style.alignItems = 'center';
-  popup.style.justifyContent = 'space-between';
+  popup.style.justifyContent = 'flex-start';
   popup.style.fontFamily = 'inherit';
   popup.style.borderRadius = theme.borderRadius + 'px';
   popup.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
@@ -141,7 +141,7 @@ function showCustomPermissionPopup() {
   // --- End: Template logic for popup positioning and styling ---
 
   // --- Begin: Content creation based on template ---
-  if (theme.template === 'banner') {
+  if (theme.template === 'only-allow') {
     // Banner layout: icon + text + buttons horizontally
     if (theme.showIcon) {
       var icon = document.createElement('div');
@@ -153,7 +153,7 @@ function showCustomPermissionPopup() {
       icon.style.alignItems = 'center';
       icon.style.justifyContent = 'center';
       icon.style.flexShrink = '0';
-      if (theme.iconUrl) {
+      if (theme.iconUrl && theme.iconUrl.trim() !== '') {
         icon.innerHTML = '<img src="' + theme.iconUrl + '" alt="icon" style="width:16px;height:16px;border-radius:50%" />';
       } else {
         icon.innerHTML = '<svg width="16" height="16" fill="white" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7v3.586l-.707.707A1 1 0 0 0 5 16h14a1 1 0 0 0 .707-1.707L19 12.586V9a7 7 0 0 0-7-7zm0 18a3 3 0 0 0 2.995-2.824L15 17h-6a3 3 0 0 0 2.824 2.995L12 20z"></path></svg>';
@@ -205,7 +205,7 @@ function showCustomPermissionPopup() {
       icon.style.alignItems = 'center';
       icon.style.justifyContent = 'center';
       icon.style.marginBottom = '12px';
-      if (theme.iconUrl) {
+      if (theme.iconUrl && theme.iconUrl.trim() !== '') {
         icon.innerHTML = '<img src="' + theme.iconUrl + '" alt="icon" style="width:22px;height:22px;border-radius:50%" />';
       } else {
         icon.innerHTML = '<svg width="22" height="22" fill="white" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7v3.586l-.707.707A1 1 0 0 0 5 16h14a1 1 0 0 0 .707-1.707L19 12.586V9a7 7 0 0 0-7-7zm0 18a3 3 0 0 0 2.995-2.824L15 17h-6a3 3 0 0 0 2.824 2.995L12 20z"></path></svg>';
@@ -240,9 +240,9 @@ function showCustomPermissionPopup() {
   allowBtn.style.color = '#fff';
   allowBtn.style.border = 'none';
   allowBtn.style.borderRadius = '6px';
-  allowBtn.style.padding = theme.template === 'banner' ? '6px 12px' : '8px 16px';
+  allowBtn.style.padding = theme.template === 'only-allow' ? '6px 12px' : '8px 16px';
   allowBtn.style.cursor = 'pointer';
-  allowBtn.style.fontSize = theme.template === 'banner' ? '0.875rem' : '1rem';
+  allowBtn.style.fontSize = theme.template === 'only-allow' ? '0.875rem' : '1rem';
   allowBtn.onclick = function () {
     popup.remove();
     if (window.Notification && Notification.permission === 'default') {
@@ -260,9 +260,9 @@ function showCustomPermissionPopup() {
   denyBtn.style.color = theme.textColor;
   denyBtn.style.border = 'none';
   denyBtn.style.borderRadius = '6px';
-  denyBtn.style.padding = theme.template === 'banner' ? '6px 12px' : '8px 16px';
+  denyBtn.style.padding = theme.template === 'only-allow' ? '6px 12px' : '8px 16px';
   denyBtn.style.cursor = 'pointer';
-  denyBtn.style.fontSize = theme.template === 'banner' ? '0.875rem' : '1rem';
+  denyBtn.style.fontSize = theme.template === 'only-allow' ? '0.875rem' : '1rem';
   denyBtn.onclick = function () { popup.remove(); };
   
   btnRow.appendChild(allowBtn);
@@ -280,9 +280,9 @@ function showCustomPermissionPopup() {
     var closeBtn = document.createElement('button');
     closeBtn.textContent = '×';
     closeBtn.style.position = 'absolute';
-    closeBtn.style.top = theme.template === 'banner' ? '50%' : '8px';
+    closeBtn.style.top = theme.template === 'only-allow' ? '50%' : '8px';
     closeBtn.style.right = '12px';
-    closeBtn.style.transform = theme.template === 'banner' ? 'translateY(-50%)' : 'none';
+    closeBtn.style.transform = theme.template === 'only-allow' ? 'translateY(-50%)' : 'none';
     closeBtn.style.background = 'none';
     closeBtn.style.border = 'none';
     closeBtn.style.fontSize = '1.3rem';
@@ -293,6 +293,18 @@ function showCustomPermissionPopup() {
   }
   
   // --- End: Content creation based on template ---
+  
+  // Add Powered by PushRocket branding
+  var branding = document.createElement('div');
+  branding.style.position = 'absolute';
+  branding.style.bottom = '4px';
+  branding.style.right = '8px';
+  branding.style.fontSize = '10px';
+  branding.style.color = theme.textColor;
+  branding.style.opacity = '0.6';
+  branding.style.fontFamily = 'inherit';
+  branding.textContent = 'Powered by PushRocket';
+  popup.appendChild(branding);
   
   document.body.appendChild(popup);
   
@@ -345,7 +357,7 @@ function showCustomPermissionPopup() {
     var animationDuration = '0.5s';
     var animationEasing = 'ease-out';
     
-    if (theme.template === 'banner') {
+    if (theme.template === 'only-allow') {
       popup.style.animation = 'bannerSlideIn ' + animationDuration + ' ' + animationEasing;
     } else if (theme.template === 'overlay') {
       popup.style.animation = 'overlayFadeIn ' + animationDuration + ' ' + animationEasing;
