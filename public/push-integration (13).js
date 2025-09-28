@@ -94,158 +94,50 @@ function showCustomPermissionPopup() {
 
   var theme = {
   "enabled": true,
-  "iconUrl": "https://www.pngmart.com/files/9/YouTube-Bell-Icon-PNG-Free-Download.png",
-  "title": "asd",
-  "message": "asd",
+  "title": "cehckldfasdasdf",
+  "message": "fasdfasdfasfacasfgasdfasfasdfas",
   "allowButtonText": "allow",
-  "denyButtonText": "deny",
-  "primaryColor": "#f40b0b",
-  "template": "modern",
+  "denyButtonText": "asdf",
+  "iconUrl": "https://www.pngmart.com/files/9/YouTube-Bell-Icon-PNG-Free-Download.png",
+  "template": "default",
+  "primaryColor": "#3b82f6",
   "backgroundColor": "#ffffff",
   "textColor": "#1f2937",
-  "borderRadius": "12"
+  "borderRadius": "12",
+  "showIcon": true,
+  "showCloseButton": true
 };
 
   var popup = document.createElement('div');
   popup.id = 'custom-permission-popup';
   
   // --- Begin: Template logic for popup positioning and styling ---
-  if (theme.template === 'overlay') {
-    // Full screen overlay
-    popup.style.position = 'fixed';
-    popup.style.top = '0';
-    popup.style.left = '0';
-    popup.style.right = '0';
-    popup.style.bottom = '0';
-    popup.style.background = theme.backgroundColor;
-    popup.style.color = theme.textColor;
-    popup.style.display = 'flex';
-    popup.style.alignItems = 'center';
-    popup.style.justifyContent = 'center';
-    popup.style.zIndex = 99999;
-    popup.style.padding = '24px 20px';
-    popup.style.flexDirection = 'column';
-    popup.style.fontFamily = 'inherit';
-    
-    // Create inner content container
-    var contentContainer = document.createElement('div');
-    contentContainer.style.maxWidth = '400px';
-    contentContainer.style.width = '100%';
-    contentContainer.style.textAlign = 'center';
-    contentContainer.style.padding = '32px 24px';
-    contentContainer.style.borderRadius = theme.borderRadius + 'px';
-    contentContainer.style.background = 'rgba(255, 255, 255, 0.95)';
-    contentContainer.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1)';
-    
-  } else if (theme.template === 'banner') {
-    // Centered top banner
-    popup.style.position = 'fixed';
-    popup.style.top = '20px';
-    popup.style.left = '50%';
-    popup.style.transform = 'translateX(-50%)';
-    popup.style.background = theme.backgroundColor;
-    popup.style.color = theme.textColor;
-    popup.style.zIndex = 99999;
-    popup.style.padding = '16px 20px';
-    popup.style.display = 'flex';
-    popup.style.alignItems = 'center';
-    popup.style.justifyContent = 'space-between';
-    popup.style.fontFamily = 'inherit';
-    popup.style.borderRadius = theme.borderRadius + 'px';
-    popup.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-    popup.style.border = '1px solid ' + theme.primaryColor + '20';
-    popup.style.maxWidth = '400px';
-    popup.style.width = '90%';
-    
-    // Create content wrapper for banner layout
-    var contentWrapper = document.createElement('div');
-    contentWrapper.style.display = 'flex';
-    contentWrapper.style.alignItems = 'center';
-    contentWrapper.style.gap = '12px';
-    contentWrapper.style.flex = '1';
-    
-  } else if (theme.template === 'modal') {
-    // Centered modal
-    popup.style.position = 'fixed';
-    popup.style.top = '50%';
-    popup.style.left = '50%';
-    popup.style.transform = 'translate(-50%, -50%)';
-    popup.style.background = theme.backgroundColor;
-    popup.style.color = theme.textColor;
-    popup.style.borderRadius = theme.borderRadius + 'px';
-    popup.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
-    popup.style.border = '1px solid rgba(0, 0, 0, 0.1)';
-    popup.style.zIndex = 99999;
-    popup.style.maxWidth = '400px';
-    popup.style.width = '90%';
-    popup.style.padding = '24px 20px';
-    popup.style.display = 'flex';
-    popup.style.flexDirection = 'column';
-    popup.style.alignItems = 'center';
-    popup.style.fontFamily = 'inherit';
-    
-  } else {
-    // Default positioning (modern, gradient, dark, minimal, rounded, glassmorphism)
-    popup.style.position = 'fixed';
-    popup.style.left = '50%';
-    popup.style.top = '20%';
-    popup.style.transform = 'translate(-50%, 0)';
-    popup.style.maxWidth = '350px';
-    popup.style.padding = '24px 20px';
-    popup.style.display = 'flex';
-    popup.style.flexDirection = 'column';
-    popup.style.alignItems = 'center';
-    popup.style.fontFamily = 'inherit';
-    popup.style.zIndex = 99999;
-    popup.style.borderRadius = theme.borderRadius + 'px';
-    popup.style.boxShadow = '0 4px 24px rgba(0,0,0,0.12)';
-    
-    // Apply background based on template
-    if (theme.template === 'gradient') {
-      popup.style.background = 'linear-gradient(135deg, ' + theme.primaryColor + ', ' + theme.backgroundColor + ')';
-      popup.style.color = theme.textColor;
-    } else if (theme.template === 'dark') {
-      popup.style.background = '#1f2937';
-      popup.style.color = '#fff';
-    } else if (theme.template === 'glassmorphism') {
-      // Create a semi-transparent overlay for glassmorphism effect
-      var overlay = document.createElement('div');
-      overlay.style.position = 'fixed';
-      overlay.style.top = '0';
-      overlay.style.left = '0';
-      overlay.style.right = '0';
-      overlay.style.bottom = '0';
-      overlay.style.background = 'rgba(0, 0, 0, 0.3)';
-      overlay.style.backdropFilter = 'blur(8px)';
-      overlay.style.webkitBackdropFilter = 'blur(8px)';
-      overlay.style.zIndex = 99998;
-      document.body.appendChild(overlay);
-      
-      popup.style.background = 'rgba(255, 255, 255, 0.15)';
-      popup.style.backdropFilter = 'blur(12px) saturate(180%)';
-      popup.style.webkitBackdropFilter = 'blur(12px) saturate(180%)';
-      popup.style.border = '1px solid rgba(255, 255, 255, 0.3)';
-      popup.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
-      popup.style.color = theme.textColor;
-      
-      // Remove overlay when popup is closed
-      var originalRemove = popup.remove;
-      popup.remove = function() {
-        if (overlay && overlay.parentNode) {
-          overlay.parentNode.removeChild(overlay);
-        }
-        originalRemove.call(this);
-      };
-    } else if (theme.template === 'minimal') {
-      popup.style.background = theme.backgroundColor;
-      popup.style.border = '2px solid ' + theme.primaryColor;
-      popup.style.color = theme.textColor;
-    } else {
-      // Modern, rounded, or fallback
-      popup.style.background = theme.backgroundColor;
-      popup.style.color = theme.textColor;
-    }
-  }
+  // Both templates use top positioning with sliding animation
+  popup.style.position = 'fixed';
+  popup.style.top = '20px';
+  popup.style.left = '50%';
+  popup.style.transform = 'translateX(-50%)';
+  popup.style.background = theme.backgroundColor;
+  popup.style.color = theme.textColor;
+  popup.style.zIndex = 99999;
+  popup.style.padding = '20px';
+  popup.style.display = 'flex';
+  popup.style.alignItems = 'center';
+  popup.style.justifyContent = 'space-between';
+  popup.style.fontFamily = 'inherit';
+  popup.style.borderRadius = theme.borderRadius + 'px';
+  popup.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+  popup.style.border = '1px solid ' + theme.primaryColor + '20';
+  popup.style.maxWidth = '400px';
+  popup.style.width = '90%';
+  
+  // Create content wrapper for layout
+  var contentWrapper = document.createElement('div');
+  contentWrapper.style.display = 'flex';
+  contentWrapper.style.alignItems = 'center';
+  contentWrapper.style.gap = '12px';
+  contentWrapper.style.flex = '1';
+  
   // --- End: Template logic for popup positioning and styling ---
 
   // --- Begin: Content creation based on template ---
