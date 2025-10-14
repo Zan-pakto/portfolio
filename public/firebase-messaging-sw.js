@@ -8,13 +8,13 @@ import {
 
 // Firebase config
 const firebaseConfig = {
-  apiKey: "AIzaSyAtAgWFRzYpYIlvQVTKjBz2hY_Ht2y72_k",
-  authDomain: "push-3deeb.firebaseapp.com",
-  projectId: "push-3deeb",
-  storageBucket: "push-3deeb.firebasestorage.app",
-  messagingSenderId: "649140429314",
-  appId: "1:649140429314:web:d179bc6a800c49227a7d1b",
-  measurementId: "G-NFY1902FKY",
+  apiKey: "AIzaSyB2SSldCQjLWMmyvuGKlnPa_va84SR971o",
+  authDomain: "testpush-38190.firebaseapp.com",
+  projectId: "testpush-38190",
+  storageBucket: "testpush-38190.firebasestorage.app",
+  messagingSenderId: "490727428858",
+  appId: "1:490727428858:web:e0525374114f29553b2f43",
+  measurementId: "G-2JV0VF2FEQ",
 };
 
 const app = initializeApp(firebaseConfig);
