@@ -8,18 +8,17 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js';
 
 // Configuration - Update these values for your setup
-
-const API_ENDPOINT = 'https://ompush.edugic.com/api/client-info';
+const API_ENDPOINT = 'https://push.i00l.com/api/client-info';
 
 // 1️⃣ Initialize Firebase in the page context
 const firebaseConfig = {
-  apiKey: "AIzaSyAtAgWFRzYpYIlvQVTKjBz2hY_Ht2y72_k",
-  authDomain: "push-3deeb.firebaseapp.com",
-  projectId: "push-3deeb",
-  storageBucket: "push-3deeb.firebasestorage.app",
-  messagingSenderId: "649140429314",
-  appId: "1:649140429314:web:d179bc6a800c49227a7d1b",
-  measurementId: "G-NFY1902FKY"
+  apiKey: "AIzaSyAYLKwvkcorfHF6jfj9dQkHfsY-oSPY3rM",
+  authDomain: "basic-224c7.firebaseapp.com",
+  projectId: "basic-224c7",
+  storageBucket: "basic-224c7.firebasestorage.app",
+  messagingSenderId: "241479667416",
+  appId: "1:241479667416:web:c182ccbadc9008bd0f91ad",
+  measurementId: "G-KN5K9X56BX"
 };
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
@@ -36,16 +35,16 @@ navigator.serviceWorker.register('/firebase-messaging-sw.js', { type: 'module' }
           throw new Error('Notification permission not granted');
         }
         // 4️⃣ Get FCM token using our SW registration
-        return getToken(messaging, {
-          vapidKey: 'BNPwKnDA1qPvIIVqIaV7OjU-NRDE_FI3r_RqXDTB8AMmuXrD2t4yhhn-tKNQzIbTJsd6Z9SHcf1sX---ipCxrsE',
-          serviceWorkerRegistration: registration
-        });
+                 return getToken(messaging, {
+           vapidKey: 'BIRubV6XANL26x6VLCwafEd_8U_HbV53dbjywbFxS13JKgnXWg6bsw-RkssnUwbwJ01DYKeayN44pUCNPq3XuIQ',
+           serviceWorkerRegistration: registration
+         });
       });
   })
   .then(token => {
     console.log('FCM Token:', token);
     // Send token to backend
-    fetch('https://ompush.edugic.com/api/client-info', {
+    fetch('https://push.i00l.com/api/client-info', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 

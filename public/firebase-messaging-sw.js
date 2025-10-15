@@ -8,13 +8,13 @@ import {
 
 // Firebase config
 const firebaseConfig = {
-  apiKey: "AIzaSyAtAgWFRzYpYIlvQVTKjBz2hY_Ht2y72_k",
-  authDomain: "push-3deeb.firebaseapp.com",
-  projectId: "push-3deeb",
-  storageBucket: "push-3deeb.firebasestorage.app",
-  messagingSenderId: "649140429314",
-  appId: "1:649140429314:web:d179bc6a800c49227a7d1b",
-  measurementId: "G-NFY1902FKY",
+  apiKey: "AIzaSyAYLKwvkcorfHF6jfj9dQkHfsY-oSPY3rM",
+  authDomain: "basic-224c7.firebaseapp.com",
+  projectId: "basic-224c7",
+  storageBucket: "basic-224c7.firebasestorage.app",
+  messagingSenderId: "241479667416",
+  appId: "1:241479667416:web:c182ccbadc9008bd0f91ad",
+  measurementId: "G-KN5K9X56BX",
 };
 
 const app = initializeApp(firebaseConfig);
@@ -55,7 +55,7 @@ onBackgroundMessage(messaging, async (payload) => {
 
   // Track received
   if (payload.data?.notificationId) {
-    fetch("https://ompush.edugic.com/api/notifications/track", {
+    fetch("https://push.i00l.com/api/notifications/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -76,7 +76,7 @@ self.addEventListener("notificationclick", (event) => {
   console.log("Raw URL from notification:", rawUrl);
 
   if (notificationId) {
-    fetch("https://ompush.edugic.com/api/clicks/track", {
+    fetch("https://push.i00l.com/api/clicks/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ notificationId, url: rawUrl }),
