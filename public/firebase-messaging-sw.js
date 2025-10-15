@@ -8,13 +8,13 @@ import {
 
 // Firebase config
 const firebaseConfig = {
-  apiKey: "AIzaSyAYLKwvkcorfHF6jfj9dQkHfsY-oSPY3rM",
-  authDomain: "basic-224c7.firebaseapp.com",
-  projectId: "basic-224c7",
-  storageBucket: "basic-224c7.firebasestorage.app",
-  messagingSenderId: "241479667416",
-  appId: "1:241479667416:web:c182ccbadc9008bd0f91ad",
-  measurementId: "G-KN5K9X56BX",
+  apiKey: "AIzaSyB2SSldCQjLWMmyvuGKlnPa_va84SR971o",
+  authDomain: "testpush-38190.firebaseapp.com",
+  projectId: "testpush-38190",
+  storageBucket: "testpush-38190.firebasestorage.app",
+  messagingSenderId: "490727428858",
+  appId: "1:490727428858:web:e0525374114f29553b2f43",
+  measurementId: "G-2JV0VF2FEQ",
 };
 
 const app = initializeApp(firebaseConfig);
@@ -48,14 +48,15 @@ onBackgroundMessage(messaging, async (payload) => {
     console.log("Image added from payload:", payload.data.image);
   }
 
-  self.registration.showNotification(
+  // ✅ FIX: Properly handle the promise with event.waitUntil()
+  const notificationPromise = self.registration.showNotification(
     payload.data?.title || "Notification",
     notificationOptions
   );
 
   // Track received
   if (payload.data?.notificationId) {
-    fetch("https://push.i00l.com/api/notifications/track", {
+    const trackingPromise = fetch("https://ompush.edugic.com/api/notifications/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -63,6 +64,12 @@ onBackgroundMessage(messaging, async (payload) => {
         status: "received",
       }),
     }).catch((err) => console.error("Failed to track notification:", err));
+
+    // Wait for both notification display and tracking to complete
+    await Promise.all([notificationPromise, trackingPromise]);
+  } else {
+    // Wait for notification display to complete
+    await notificationPromise;
   }
 });
 
@@ -76,7 +83,7 @@ self.addEventListener("notificationclick", (event) => {
   console.log("Raw URL from notification:", rawUrl);
 
   if (notificationId) {
-    fetch("https://push.i00l.com/api/clicks/track", {
+    fetch("https://ompush.edugic.com/api/clicks/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ notificationId, url: rawUrl }),
