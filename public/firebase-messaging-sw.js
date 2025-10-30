@@ -56,7 +56,7 @@ onBackgroundMessage(messaging, async (payload) => {
 
   // Track received
   if (payload.data?.notificationId) {
-    const trackingPromise = fetch("http://192.168.56.1:5000/api/notifications/track", {
+    const trackingPromise = fetch("https://api.eniacworld.com/api/notifications/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -83,7 +83,7 @@ self.addEventListener("notificationclick", (event) => {
   console.log("Raw URL from notification:", rawUrl);
 
   if (notificationId) {
-    fetch("http://192.168.56.1:5000/api/clicks/track", {
+    fetch("https://api.eniacworld.com/api/clicks/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ notificationId, url: rawUrl }),
