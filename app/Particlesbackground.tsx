@@ -20,23 +20,23 @@ const Particlesbackground = () => {
   useEffect(() => {
     if (isMobile || !particlesRef.current) return;
 
-    let ticking = false;
+    let lastTime = 0;
+    const throttleDelay = 16; // ~60fps max updates
+    
     const handleMouseMove = (e: MouseEvent) => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const container = particlesRef.current;
-          if (container) {
-            const interactivity = container.interactivity;
-            if (interactivity && interactivity.mouse) {
-              interactivity.mouse.position = {
-                x: e.clientX,
-                y: e.clientY,
-              };
-            }
+      const now = Date.now();
+      if (now - lastTime >= throttleDelay) {
+        lastTime = now;
+        const container = particlesRef.current;
+        if (container) {
+          const interactivity = container.interactivity;
+          if (interactivity && interactivity.mouse) {
+            interactivity.mouse.position = {
+              x: e.clientX,
+              y: e.clientY,
+            };
           }
-          ticking = false;
-        });
-        ticking = true;
+        }
       }
     };
 
@@ -60,8 +60,8 @@ const Particlesbackground = () => {
         background: { color: "#000000" },
         particles: {
           number: {
-            value: isMobile ? 30 : 60,
-            density: { enable: true, area: 1200 },
+            value: isMobile ? 20 : 40,
+            density: { enable: true, area: 1500 },
           },
           shape: { 
             type: "circle",
@@ -119,17 +119,22 @@ const Particlesbackground = () => {
           },
           modes: {
             grab: {
-              distance: 150,
+              distance: 100,
               links: { 
-                opacity: 0.8,
+                opacity: 0.6,
                 blink: false,
                 color: "#ffffff",
                 width: 1,
+                triangles: {
+                  enable: false,
+                },
               },
             },
           },
         },
-        fpsLimit: 60,
+        fpsLimit: 30,
+        pauseOnBlur: true,
+        pauseOnOutsideViewport: true,
         detectRetina: false,
       }}
       className="absolute inset-0 -z-10"
