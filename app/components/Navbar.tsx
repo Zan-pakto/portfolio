@@ -1,16 +1,29 @@
 "use strict";
 import { useState } from "react";
-import Link from "next/link";
+
+const scrollToSection = (sectionId: string) => {
+  const element = document.getElementById(sectionId);
+  if (element) {
+    element.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+};
+
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
+  const handleNavClick = (sectionId: string) => {
+    scrollToSection(sectionId);
+    setOpen(false);
+  };
+
   return (
-    <nav className="w-full bg-transparent text-amber-50 p-4">
+    <nav className="w-full bg-transparent text-amber-50 p-4 fixed top-0 left-0 right-0 z-50">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
-        <div className="border-2 border-amber-50 rounded-4xl px-4 py-2 w-fit text-xl">
-          <Link href={"/"} target="_parent">
-            Arvind Shahi
-          </Link>
+        <div 
+          className="border-2 border-amber-50 rounded-4xl px-4 py-2 w-fit text-xl cursor-pointer"
+          onClick={() => handleNavClick("home")}
+        >
+          Arvind Shahi
         </div>
 
         <button
@@ -36,7 +49,7 @@ export default function Navbar() {
         </button>
 
         <div className="hidden md:flex gap-10">
-          <NavLinks />
+          <NavLinks onClick={handleNavClick} />
         </div>
       </div>
 
@@ -50,31 +63,39 @@ export default function Navbar() {
           >
             &times;
           </button>
-          <NavLinks onClick={() => setOpen(false)} />
+          <NavLinks onClick={handleNavClick} />
         </div>
       )}
     </nav>
   );
 }
 
-function NavLinks({ onClick }: { onClick?: () => void }) {
+function NavLinks({ onClick }: { onClick: (sectionId: string) => void }) {
   return (
     <>
-      <div className="px-4 py-2 text-lg font-light rounded-xl hover:border-2 hover:border-amber-50 transition-all cursor-pointer">
-        <Link href="/" target="_parent" onClick={onClick}>
-          Home
-        </Link>
+      <div 
+        className="px-4 py-2 text-lg font-light rounded-xl hover:border-2 hover:border-amber-50 transition-all cursor-pointer"
+        onClick={() => onClick("home")}
+      >
+        Home
       </div>
-      <div className="px-4 py-2 text-lg font-light rounded-xl hover:border-2 hover:border-amber-50 transition-all cursor-pointer">
-        <Link href="/about" target="_parent" onClick={onClick}>
-          About
-        </Link>
+      <div 
+        className="px-4 py-2 text-lg font-light rounded-xl hover:border-2 hover:border-amber-50 transition-all cursor-pointer"
+        onClick={() => onClick("about")}
+      >
+        About
       </div>
-      <div className="px-4 py-2 text-lg font-light rounded-xl hover:border-2 hover:border-amber-50 transition-all cursor-pointer">
-        <Link href="/projects" target="_parent" onClick={onClick}>Projects</Link>
+      <div 
+        className="px-4 py-2 text-lg font-light rounded-xl hover:border-2 hover:border-amber-50 transition-all cursor-pointer"
+        onClick={() => onClick("projects")}
+      >
+        Projects
       </div>
-      <div className="px-4 py-2 text-lg font-light rounded-xl hover:border-2 hover:border-amber-50 transition-all cursor-pointer">
-        <Link href="/contact" target="_parent" onClick={onClick}>Contact</Link>
+      <div 
+        className="px-4 py-2 text-lg font-light rounded-xl hover:border-2 hover:border-amber-50 transition-all cursor-pointer"
+        onClick={() => onClick("contact")}
+      >
+        Contact
       </div>
     </>
   );

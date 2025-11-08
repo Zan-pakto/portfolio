@@ -2,12 +2,12 @@
 
 import { useCallback, useEffect, useState, useRef } from "react";
 import Particles from "react-tsparticles";
-import { Engine } from "tsparticles-engine";
+import { Engine, Container } from "tsparticles-engine";
 import { loadSlim } from "tsparticles-slim";
 
 const Particlesbackground = () => {
   const [isMobile, setIsMobile] = useState(false);
-  const particlesRef = useRef<any>(null);
+  const particlesRef = useRef<Container | null>(null);
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
@@ -21,10 +21,10 @@ const Particlesbackground = () => {
     if (isMobile || !particlesRef.current) return;
 
     const handleMouseMove = (e: MouseEvent) => {
-      const container = particlesRef.current?.container;
+      const container = particlesRef.current;
       if (container) {
         const interactivity = container.interactivity;
-        if (interactivity) {
+        if (interactivity && interactivity.mouse) {
           interactivity.mouse.position = {
             x: e.clientX,
             y: e.clientY,
@@ -37,11 +37,17 @@ const Particlesbackground = () => {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [isMobile]);
 
+  const particlesLoaded = useCallback(async (container?: Container) => {
+    if (container) {
+      particlesRef.current = container;
+    }
+  }, []);
+
   return (
     <Particles
-      ref={particlesRef}
       id="tsparticles"
       init={particlesInit}
+      loaded={particlesLoaded}
       options={{
         fullScreen: { enable: false },
         background: { color: "#000000" },
