@@ -17,32 +17,6 @@ const Particlesbackground = () => {
     await loadSlim(engine);
   }, []);
 
-  useEffect(() => {
-    if (isMobile || !particlesRef.current) return;
-
-    let lastTime = 0;
-    const throttleDelay = 16; // ~60fps max updates
-    
-    const handleMouseMove = (e: MouseEvent) => {
-      const now = Date.now();
-      if (now - lastTime >= throttleDelay) {
-        lastTime = now;
-        const container = particlesRef.current;
-        if (container) {
-          const interactivity = container.interactivity;
-          if (interactivity && interactivity.mouse) {
-            interactivity.mouse.position = {
-              x: e.clientX,
-              y: e.clientY,
-            };
-          }
-        }
-      }
-    };
-
-    window.addEventListener("mousemove", handleMouseMove, { passive: true });
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [isMobile]);
 
   const particlesLoaded = useCallback(async (container?: Container) => {
     if (container) {
@@ -107,28 +81,13 @@ const Particlesbackground = () => {
           detectsOn: "window",
           events: {
             onHover: { 
-              enable: !isMobile,
-              mode: "grab",
+              enable: false,
             },
             onDiv: {
               enable: false,
             },
             onClick: {
               enable: false,
-            },
-          },
-          modes: {
-            grab: {
-              distance: 100,
-              links: { 
-                opacity: 0.6,
-                blink: false,
-                color: "#ffffff",
-                width: 1,
-                triangles: {
-                  enable: false,
-                },
-              },
             },
           },
         },

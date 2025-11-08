@@ -6,6 +6,7 @@ import "./globals.css";
 import Particlesbackground from "./Particlesbackground";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import LocomotiveScroll from "locomotive-scroll";
 
 export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
@@ -32,6 +33,8 @@ export default function Home() {
   const workRef = useRef<HTMLDivElement>(null);
   const certRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const locomotiveScrollRef = useRef<LocomotiveScroll | null>(null);
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
@@ -40,6 +43,26 @@ export default function Home() {
     return () => {
       clearTimeout(animateTimer);
       clearTimeout(hideTimer);
+    };
+  }, []);
+
+  // Initialize Locomotive Scroll
+  useEffect(() => {
+    if (!scrollRef.current) return;
+
+    const scroll = new LocomotiveScroll({
+      el: scrollRef.current,
+      smooth: true,
+      multiplier: 1,
+      class: "is-revealed",
+    });
+
+    locomotiveScrollRef.current = scroll;
+    (window as any).locomotiveScroll = scroll;
+
+    return () => {
+      scroll.destroy();
+      delete (window as any).locomotiveScroll;
     };
   }, []);
 
@@ -89,7 +112,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="relative w-full">
+    <div ref={scrollRef} data-scroll-container className="relative w-full">
       {showSplash && (
         <div
           className={`fixed inset-0 flex items-center justify-center bg-black z-50 transition-all duration-700 ease-in-out will-change-transform
@@ -111,7 +134,7 @@ export default function Home() {
       <Navbar />
       
       {/* Home Section */}
-      <section id="home" className="relative w-full min-h-screen">
+      <section id="home" data-scroll-section className="relative w-full min-h-screen">
         <motion.div
           className="absolute top-1/3 w-full text-center text-white z-10 px-4 will-change-transform"
           initial={{ opacity: 0, y: 40 }}
@@ -141,7 +164,7 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="relative w-full min-h-screen">
+      <section id="about" data-scroll-section className="relative w-full min-h-screen">
         <div className="flex flex-col md:flex-row items-center justify-center min-h-[80vh] px-4">
           {/* Text Block */}
           <div className="flex-1 flex flex-col justify-center items-center md:items-center mb-8 md:mb-0 md:pr-12">
@@ -574,7 +597,7 @@ export default function Home() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="relative w-full min-h-screen text-white">
+      <section id="projects" data-scroll-section className="relative w-full min-h-screen text-white">
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4 pt-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -649,7 +672,7 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="relative w-full min-h-screen overflow-hidden">
+      <section id="contact" data-scroll-section className="relative w-full min-h-screen overflow-hidden">
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4 pt-24">
           <div className="max-w-4xl w-full grid md:grid-cols-2 gap-10">
             {/* Contact Information Section */}

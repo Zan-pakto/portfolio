@@ -4,7 +4,13 @@ import { useState } from "react";
 const scrollToSection = (sectionId: string) => {
   const element = document.getElementById(sectionId);
   if (element) {
-    element.scrollIntoView({ behavior: "smooth", block: "start" });
+    // Try to use Locomotive Scroll if available
+    const scrollContainer = document.querySelector('[data-scroll-container]');
+    if (scrollContainer && (window as any).locomotiveScroll) {
+      (window as any).locomotiveScroll.scrollTo(element);
+    } else {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   }
 };
 
