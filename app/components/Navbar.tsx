@@ -1,13 +1,24 @@
 "use strict";
 import { useState } from "react";
 
+declare global {
+  interface Window {
+    locomotiveScroll?: {
+      scrollTo: (element: HTMLElement) => void;
+      destroy: () => void;
+    };
+  }
+}
+
 const scrollToSection = (sectionId: string) => {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+  
   const element = document.getElementById(sectionId);
   if (element) {
     // Try to use Locomotive Scroll if available
     const scrollContainer = document.querySelector('[data-scroll-container]');
-    if (scrollContainer && (window as any).locomotiveScroll) {
-      (window as any).locomotiveScroll.scrollTo(element);
+    if (scrollContainer && window.locomotiveScroll) {
+      window.locomotiveScroll.scrollTo(element);
     } else {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
     }

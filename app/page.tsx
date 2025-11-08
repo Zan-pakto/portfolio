@@ -6,7 +6,14 @@ import "./globals.css";
 import Particlesbackground from "./Particlesbackground";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import LocomotiveScroll from "locomotive-scroll";
+declare global {
+  interface Window {
+    locomotiveScroll?: {
+      scrollTo: (element: HTMLElement) => void;
+      destroy: () => void;
+    };
+  }
+}
 
 export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
@@ -34,10 +41,15 @@ export default function Home() {
   const certRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const locomotiveScrollRef = useRef<LocomotiveScroll | null>(null);
+  const locomotiveScrollRef = useRef<{
+    scrollTo: (element: HTMLElement) => void;
+    destroy: () => void;
+  } | null>(null);
 
   useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
+    if (typeof window !== "undefined") {
+      setIsMobile(window.innerWidth < 768);
+    }
     const animateTimer = setTimeout(() => setAnimateOut(true), 500);
     const hideTimer = setTimeout(() => setShowSplash(false), 1000);
     return () => {
@@ -46,23 +58,33 @@ export default function Home() {
     };
   }, []);
 
-  // Initialize Locomotive Scroll
+  // Initialize Locomotive Scroll (client-side only)
   useEffect(() => {
-    if (!scrollRef.current) return;
+    if (typeof window === "undefined" || !scrollRef.current) return;
 
-    const scroll = new LocomotiveScroll({
-      el: scrollRef.current,
-      smooth: true,
-      multiplier: 1,
-      class: "is-revealed",
-    });
+    const initScroll = async () => {
+      const LocomotiveScroll = (await import("locomotive-scroll")).default;
+      
+      const scroll = new LocomotiveScroll({
+        el: scrollRef.current!,
+        smooth: true,
+        multiplier: 1,
+        class: "is-revealed",
+      });
 
-    locomotiveScrollRef.current = scroll;
-    (window as any).locomotiveScroll = scroll;
+      locomotiveScrollRef.current = scroll;
+      window.locomotiveScroll = scroll;
+
+      return () => {
+        scroll.destroy();
+        delete window.locomotiveScroll;
+      };
+    };
+
+    const cleanup = initScroll();
 
     return () => {
-      scroll.destroy();
-      delete (window as any).locomotiveScroll;
+      cleanup.then((cleanupFn) => cleanupFn?.());
     };
   }, []);
 
