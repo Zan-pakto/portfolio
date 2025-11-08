@@ -50,92 +50,41 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Intersection Observers for About section
+  // Combined Intersection Observer for better performance
   useEffect(() => {
     const observer = new window.IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setShowResume(true);
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            if (entry.target === resumeRef.current) setShowResume(true);
+            if (entry.target === resmetextRef.current) setresmetext(true);
+            if (entry.target === laptopRef.current) setShowLaptop(true);
+            if (entry.target === bottomTextsRef.current) setShowBottomTexts(true);
+            if (entry.target === skillsRef.current) setShowSkills(true);
+            if (entry.target === workRef.current) setShowWork(true);
+            if (entry.target === certRef.current) setShowCert(true);
+            if (entry.target === gridRef.current) setShowGridImages(true);
+          }
+        });
       },
-      { threshold: 0.2 }
+      { threshold: 0.1, rootMargin: "50px" }
     );
-    if (resumeRef.current) observer.observe(resumeRef.current);
-    return () => observer.disconnect();
-  }, []);
 
-  useEffect(() => {
-    const observer = new window.IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setresmetext(true);
-      },
-      { threshold: 0.2 }
-    );
-    if (resmetextRef.current) observer.observe(resmetextRef.current);
-    return () => observer.disconnect();
-  }, []);
+    const refs = [
+      resumeRef.current,
+      resmetextRef.current,
+      laptopRef.current,
+      bottomTextsRef.current,
+      skillsRef.current,
+      workRef.current,
+      certRef.current,
+      gridRef.current,
+    ].filter(Boolean);
 
-  useEffect(() => {
-    const observer = new window.IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setShowLaptop(true);
-      },
-      { threshold: 0.2 }
-    );
-    if (laptopRef.current) observer.observe(laptopRef.current);
-    return () => observer.disconnect();
-  }, []);
+    refs.forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
 
-  useEffect(() => {
-    const observer = new window.IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setShowBottomTexts(true);
-      },
-      { threshold: 0.2 }
-    );
-    if (bottomTextsRef.current) observer.observe(bottomTextsRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const observer = new window.IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setShowSkills(true);
-      },
-      { threshold: 0.2 }
-    );
-    if (skillsRef.current) observer.observe(skillsRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const observer = new window.IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setShowWork(true);
-      },
-      { threshold: 0.2 }
-    );
-    if (workRef.current) observer.observe(workRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const observer = new window.IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setShowCert(true);
-      },
-      { threshold: 0.2 }
-    );
-    if (certRef.current) observer.observe(certRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const observer = new window.IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setShowGridImages(true);
-      },
-      { threshold: 0.2 }
-    );
-    if (gridRef.current) observer.observe(gridRef.current);
     return () => observer.disconnect();
   }, []);
 

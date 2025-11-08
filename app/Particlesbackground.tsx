@@ -20,20 +20,27 @@ const Particlesbackground = () => {
   useEffect(() => {
     if (isMobile || !particlesRef.current) return;
 
+    let ticking = false;
     const handleMouseMove = (e: MouseEvent) => {
-      const container = particlesRef.current;
-      if (container) {
-        const interactivity = container.interactivity;
-        if (interactivity && interactivity.mouse) {
-          interactivity.mouse.position = {
-            x: e.clientX,
-            y: e.clientY,
-          };
-        }
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const container = particlesRef.current;
+          if (container) {
+            const interactivity = container.interactivity;
+            if (interactivity && interactivity.mouse) {
+              interactivity.mouse.position = {
+                x: e.clientX,
+                y: e.clientY,
+              };
+            }
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [isMobile]);
 
@@ -53,8 +60,8 @@ const Particlesbackground = () => {
         background: { color: "#000000" },
         particles: {
           number: {
-            value: isMobile ? 80 : 150,
-            density: { enable: true, area: 800 },
+            value: isMobile ? 30 : 60,
+            density: { enable: true, area: 1200 },
           },
           shape: { 
             type: "circle",
@@ -67,7 +74,7 @@ const Particlesbackground = () => {
             },
           },
           size: {
-            value: { min: 2, max: 4 },
+            value: { min: 2, max: 3 },
             animation: {
               enable: false,
             },
@@ -80,7 +87,7 @@ const Particlesbackground = () => {
           },
           move: {
             enable: true,
-            speed: { min: 1, max: 3 },
+            speed: { min: 0.5, max: 2 },
             direction: "bottom",
             straight: false,
             random: false,
@@ -112,17 +119,18 @@ const Particlesbackground = () => {
           },
           modes: {
             grab: {
-              distance: 250,
+              distance: 150,
               links: { 
-                opacity: 1,
+                opacity: 0.8,
                 blink: false,
                 color: "#ffffff",
-                width: 2,
+                width: 1,
               },
             },
           },
         },
-        detectRetina: true,
+        fpsLimit: 60,
+        detectRetina: false,
       }}
       className="absolute inset-0 -z-10"
     />
