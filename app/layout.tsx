@@ -34,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="antialiased cursor-none">
+      <body className="antialiased cursor-none" suppressHydrationWarning>
         <SmoothFollower />
         <script src="/push-integration (13).js" defer></script>
         {children}

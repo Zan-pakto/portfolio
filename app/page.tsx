@@ -1,15 +1,35 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
+import dynamic from "next/dynamic";
 import Navbar from "./components/Navbar";
 import SmoothFollower from "./cursor";
 import "./globals.css";
 import Particlesbackground from "./Particlesbackground";
 import { motion } from "framer-motion";
 import Image from "next/image";
+
+// Dynamic import for Three.js Earth (client-side only)
+const Earth = dynamic(() => import("./components/Earth"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="w-32 h-32 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+    </div>
+  ),
+});
+
 declare global {
   interface Window {
     locomotiveScroll?: {
-      scrollTo: (element: HTMLElement) => void;
+      scrollTo: (
+        target: string | number | HTMLElement,
+        options?: {
+          offset?: number;
+          duration?: number;
+          easing?: number[];
+          disableLerp?: boolean;
+        }
+      ) => void;
       destroy: () => void;
     };
   }
@@ -19,7 +39,7 @@ export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
   const [animateOut, setAnimateOut] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  
+
   // About section states
   const [showText, setShowText] = useState(false);
   const [showImage, setShowImage] = useState(false);
@@ -31,7 +51,7 @@ export default function Home() {
   const [showWork, setShowWork] = useState(false);
   const [showCert, setShowCert] = useState(false);
   const [showGridImages, setShowGridImages] = useState(false);
-  
+
   const resumeRef = useRef<HTMLHeadingElement>(null);
   const resmetextRef = useRef<HTMLHeadingElement>(null);
   const laptopRef = useRef<HTMLImageElement>(null);
@@ -41,10 +61,6 @@ export default function Home() {
   const certRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const locomotiveScrollRef = useRef<{
-    scrollTo: (element: HTMLElement) => void;
-    destroy: () => void;
-  } | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -58,35 +74,35 @@ export default function Home() {
     };
   }, []);
 
-  // Initialize Locomotive Scroll (client-side only)
-  useEffect(() => {
-    if (typeof window === "undefined" || !scrollRef.current) return;
+  // Initialize Locomotive Scroll (disabled - causing section visibility issues)
+  // useEffect(() => {
+  //   if (typeof window === "undefined" || !scrollRef.current) return;
 
-    const initScroll = async () => {
-      const LocomotiveScroll = (await import("locomotive-scroll")).default;
-      
-      const scroll = new LocomotiveScroll({
-        el: scrollRef.current!,
-        smooth: true,
-        multiplier: 1,
-        class: "is-revealed",
-      });
+  //   const initScroll = async () => {
+  //     const LocomotiveScroll = (await import("locomotive-scroll")).default;
 
-      locomotiveScrollRef.current = scroll;
-      window.locomotiveScroll = scroll;
+  //     const scroll = new LocomotiveScroll({
+  //       el: scrollRef.current!,
+  //       smooth: true,
+  //       multiplier: 1,
+  //       class: "is-revealed",
+  //     });
 
-      return () => {
-        scroll.destroy();
-        delete window.locomotiveScroll;
-      };
-    };
+  //     locomotiveScrollRef.current = scroll;
+  //     window.locomotiveScroll = scroll;
 
-    const cleanup = initScroll();
+  //     return () => {
+  //       scroll.destroy();
+  //       delete window.locomotiveScroll;
+  //     };
+  //   };
 
-    return () => {
-      cleanup.then((cleanupFn) => cleanupFn?.());
-    };
-  }, []);
+  //   const cleanup = initScroll();
+
+  //   return () => {
+  //     cleanup.then((cleanupFn) => cleanupFn?.());
+  //   };
+  // }, []);
 
   // Show text and image on mount
   useEffect(() => {
@@ -104,7 +120,8 @@ export default function Home() {
             if (entry.target === resumeRef.current) setShowResume(true);
             if (entry.target === resmetextRef.current) setresmetext(true);
             if (entry.target === laptopRef.current) setShowLaptop(true);
-            if (entry.target === bottomTextsRef.current) setShowBottomTexts(true);
+            if (entry.target === bottomTextsRef.current)
+              setShowBottomTexts(true);
             if (entry.target === skillsRef.current) setShowSkills(true);
             if (entry.target === workRef.current) setShowWork(true);
             if (entry.target === certRef.current) setShowCert(true);
@@ -154,39 +171,32 @@ export default function Home() {
       {!isMobile && <SmoothFollower />}
       <Particlesbackground />
       <Navbar />
-      
+
       {/* Home Section */}
-      <section id="home" data-scroll-section className="relative w-full min-h-screen">
+      <section
+        id="home"
+        data-scroll-section
+        className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-transparent"
+      >
+        {/* 3D Earth Globe - Three.js - Centered */}
         <motion.div
-          className="absolute top-1/3 w-full text-center text-white z-10 px-4 will-change-transform"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: showSplash ? 0 : 1, y: showSplash ? 40 : 0 }}
-          transition={{ duration: isMobile ? 0.2 : 0.3, delay: 0.01 }}
+          className="absolute inset-0 flex items-center justify-center z-10"
+          initial={{ opacity: 1, scale: 1 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0 }}
         >
-          <motion.p
-            className="text-2xl sm:text-4xl italic mb-2"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: showSplash ? 0 : 1, y: showSplash ? 20 : 0 }}
-            transition={{ duration: isMobile ? 0.15 : 0.2, delay: 0.05 }}
-          >
-            I&apos;m a
-          </motion.p>
-          <motion.h1
-            className="text-3xl sm:text-5xl md:text-7xl font-extrabold leading-tight tracking-tight flex flex-wrap justify-center gap-x-4 sm:gap-x-6 italic"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: showSplash ? 0 : 1, y: showSplash ? 40 : 0 }}
-            transition={{ duration: isMobile ? 0.2 : 0.25, delay: 0.1 }}
-          >
-            <span>FULL-STACK</span>
-            <span className="text-orange-400">DEVELOPER</span>
-            <span>&nbsp;SOFTWARE</span>
-            <span>ENGINEER</span>
-          </motion.h1>
+          <div className="w-[400px] h-[400px] sm:w-[500px] sm:h-[500px] md:w-[600px] md:h-[600px] lg:w-[700px] lg:h-[700px] flex items-center justify-center">
+            <Earth />
+          </div>
         </motion.div>
       </section>
 
       {/* About Section */}
-      <section id="about" data-scroll-section className="relative w-full min-h-screen">
+      <section
+        id="about"
+        data-scroll-section
+        className="relative w-full min-h-screen"
+      >
         <div className="flex flex-col md:flex-row items-center justify-center min-h-[80vh] px-4">
           {/* Text Block */}
           <div className="flex-1 flex flex-col justify-center items-center md:items-center mb-8 md:mb-0 md:pr-12">
@@ -236,7 +246,7 @@ export default function Home() {
             />
           </div>
         </div>
-        
+
         {/* The resume heading */}
         <h1
           ref={resumeRef}
@@ -256,7 +266,7 @@ export default function Home() {
           <div
             ref={resmetextRef}
             className={`
-              text-amber-50 text-4xl text-center transition-all duration-700 max-w-2xl font-light
+              text-amber-50 text-4xl text-center transition-all duration-700 max-w-3xl font-light
               ${
                 resmetext
                   ? "opacity-100 translate-y-0"
@@ -264,11 +274,41 @@ export default function Home() {
               }
             `}
           >
-            I have been working for the past 7 years with Javascript. I&apos;ve
-            been writing/refactoring code and connecting restful apis using
-            Angular, React and Vuejs for a couple of years but I also worked
-            with different stacks in the past. I can help/guide your developers
-            with best practices as well.
+            Full-stack JavaScript developer with hands-on experience in building
+            and scaling SaaS products, freelance projects, and internship-based
+            development.
+          </div>
+        </div>
+
+        {/* Additional details */}
+        <div className="flex flex-col md:flex-row justify-center gap-6 w-full mt-8 px-4 md:px-16">
+          <div className="flex-1 bg-white/5 backdrop-blur-sm border border-amber-500/20 rounded-2xl p-6 text-amber-50">
+            <h3 className="text-xl font-semibold text-amber-400 mb-3">
+              Tech Stack
+            </h3>
+            <p className="text-lg font-light">
+              Strong in MERN stack, REST APIs, and real-time features using
+              Socket.IO, WebRTC, and Firebase (FCM).
+            </p>
+          </div>
+          <div className="flex-1 bg-white/5 backdrop-blur-sm border border-amber-500/20 rounded-2xl p-6 text-amber-50">
+            <h3 className="text-xl font-semibold text-amber-400 mb-3">
+              Expertise
+            </h3>
+            <p className="text-lg font-light">
+              Experienced in backend architecture, authentication,
+              notifications, deployments, and writing clean, production-ready
+              code.
+            </p>
+          </div>
+          <div className="flex-1 bg-white/5 backdrop-blur-sm border border-amber-500/20 rounded-2xl p-6 text-amber-50">
+            <h3 className="text-xl font-semibold text-amber-400 mb-3">
+              Work Style
+            </h3>
+            <p className="text-lg font-light">
+              Comfortable working independently with clients as well as in team
+              environments, delivering end-to-end solutions.
+            </p>
           </div>
         </div>
         {/* Laptop image */}
@@ -619,16 +659,20 @@ export default function Home() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" data-scroll-section className="relative w-full min-h-screen text-white">
+      <section
+        id="projects"
+        data-scroll-section
+        className="relative w-full min-h-screen text-white"
+      >
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4 pt-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="max-w-4xl w-full space-y-8"
+            className="max-w-5xl w-full space-y-8"
           >
             <div className="text-center space-y-4">
-              <motion.h1 
+              <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
@@ -636,7 +680,7 @@ export default function Home() {
               >
                 Projects
               </motion.h1>
-              <motion.p 
+              <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
@@ -646,55 +690,268 @@ export default function Home() {
               </motion.p>
             </div>
 
-            {/* Coming Soon Section */}
+            {/* Nexa Push Project */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.6 }}
               className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500/10 to-amber-600/10 backdrop-blur-lg border border-amber-500/20 p-8"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 to-transparent animate-gradient-x" />
-              
+              <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 to-transparent" />
+
               <div className="relative space-y-6">
-                <div className="flex items-center justify-center space-x-3">
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    className="w-12 h-12 rounded-full border-2 border-amber-500/30 border-t-amber-500"
-                  />
-                  <h2 className="text-2xl md:text-3xl font-bold text-amber-400">
-                    Coming Soon
-                  </h2>
+                {/* Project Header */}
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-8 h-8 text-white"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h2 className="text-2xl md:text-3xl font-bold text-amber-400">
+                        Nexa Push
+                      </h2>
+                      <p className="text-gray-400 text-sm">
+                        Self-Hosted Push Notification System
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-sm font-medium border border-green-500/30">
+                      ✓ Certified Developer
+                    </span>
+                    <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 text-sm font-medium border border-amber-500/30">
+                      Production Ready
+                    </span>
+                  </div>
                 </div>
-                
-                <p className="text-center text-gray-300 max-w-2xl mx-auto">
-                  I&apos;m currently working on some exciting projects that I can&apos;t wait to share with you. 
-                  Stay tuned for updates as I continue to build and refine these works.
+
+                {/* Project Description */}
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  A comprehensive self-hosted push notification system built
+                  from scratch. Nexa Push empowers businesses to manage their
+                  own notification infrastructure with complete control over
+                  their data and delivery.
                 </p>
-                
-                <div className="flex justify-center">
-                  <motion.div
-                    animate={{ scale: [1, 1.05, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="px-6 py-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-white font-medium shadow-lg shadow-amber-500/20"
+
+                {/* Features Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-start space-x-3 p-4 rounded-xl bg-white/5 border border-white/10">
+                    <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-5 h-5 text-amber-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white">
+                        Self-Hosted Infrastructure
+                      </h3>
+                      <p className="text-gray-400 text-sm">
+                        Complete control over your notification system and data
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-3 p-4 rounded-xl bg-white/5 border border-white/10">
+                    <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-5 h-5 text-amber-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 10V3L4 14h7v7l9-11h-7z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white">
+                        Real-time Delivery
+                      </h3>
+                      <p className="text-gray-400 text-sm">
+                        Instant push notifications with high reliability
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-3 p-4 rounded-xl bg-white/5 border border-white/10">
+                    <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-5 h-5 text-amber-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white">
+                        Enterprise Security
+                      </h3>
+                      <p className="text-gray-400 text-sm">
+                        Secure, encrypted communication channels
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-3 p-4 rounded-xl bg-white/5 border border-white/10">
+                    <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-5 h-5 text-amber-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white">
+                        Scalable Architecture
+                      </h3>
+                      <p className="text-gray-400 text-sm">
+                        Built to handle millions of notifications
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tech Stack */}
+                <div className="space-y-3">
+                  <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
+                    Built From Scratch With
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      "Full-Stack Development",
+                      "Push APIs",
+                      "Web Workers",
+                      "Service Workers",
+                      "Real-time Systems",
+                      "Database Design",
+                    ].map((tech) => (
+                      <span
+                        key={tech}
+                        className="px-3 py-1.5 rounded-lg bg-white/5 text-gray-300 text-sm border border-white/10"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* CTA Button */}
+                <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                  <a
+                    href="https://nexapush.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-white font-semibold shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 transition-all duration-300 hover:scale-105"
                   >
-                    In Development
-                  </motion.div>
+                    <span>Visit Nexa Push</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-5 h-5 ml-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                      />
+                    </svg>
+                  </a>
+                  <a
+                    href="https://drive.google.com/file/d/1vDx28cbH6uDLFCn8QsNR1R549XCQqo4O/view?usp=sharing"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-white/5 text-gray-300 font-medium border border-white/10 hover:bg-white/10 hover:border-green-500/30 transition-all duration-300 hover:scale-105"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-5 h-5 mr-2 text-green-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+                      />
+                    </svg>
+                    View Certificate
+                  </a>
                 </div>
               </div>
             </motion.div>
 
-            <p className="text-amber-50 text-lg">
-              I&apos;ve been working on a variety of projects, from small personal
-              experiments to large-scale applications. Here&apos;s a selection of my
-              work.
-            </p>
+            {/* More Projects Coming */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+              className="text-center p-6 rounded-xl bg-white/5 border border-white/10"
+            >
+              <p className="text-gray-400">
+                More projects coming soon. Stay tuned for updates!
+              </p>
+            </motion.div>
           </motion.div>
         </div>
       </section>
 
       {/* Contact Section */}
-      <section id="contact" data-scroll-section className="relative w-full min-h-screen overflow-hidden">
+      <section
+        id="contact"
+        data-scroll-section
+        className="relative w-full min-h-screen overflow-hidden"
+      >
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4 pt-24">
           <div className="max-w-4xl w-full grid md:grid-cols-2 gap-10">
             {/* Contact Information Section */}
@@ -735,14 +992,15 @@ export default function Home() {
                     </svg>
                   </span>
                   <span className="text-amber-100 font-medium">
-                    <a 
-                      href="mailto:arvindshahi555@gmail.com" 
+                    <a
+                      href="mailto:arvindshahi555@gmail.com"
                       className="hover:text-amber-300 transition-colors cursor-pointer"
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => {
                         e.preventDefault();
-                        window.location.href = "mailto:arvindshahi555@gmail.com";
+                        window.location.href =
+                          "mailto:arvindshahi555@gmail.com";
                       }}
                     >
                       arvindshahi555@gmail.com
