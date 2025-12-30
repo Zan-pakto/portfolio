@@ -8,13 +8,13 @@ import {
 
 // Firebase config
 const firebaseConfig = {
-  apiKey: "AIzaSyAYLKwvkcorfHF6jfj9dQkHfsY-oSPY3rM",
-  authDomain: "basic-224c7.firebaseapp.com",
-  projectId: "basic-224c7",
-  storageBucket: "basic-224c7.firebasestorage.app",
-  messagingSenderId: "241479667416",
-  appId: "1:241479667416:web:c182ccbadc9008bd0f91ad",
-  measurementId: "G-KN5K9X56BX",
+  apiKey: "AIzaSyBalk9xL597wAu7xy3IEaYyKtThGvKSIc8",
+  authDomain: "test1-68b65.firebaseapp.com",
+  projectId: "test1-68b65",
+  storageBucket: "test1-68b65.firebasestorage.app",
+  messagingSenderId: "1028270206064",
+  appId: "1:1028270206064:web:be2ecce242f6cac9bf18b5",
+  measurementId: "G-L725Q1GVZN",
 };
 
 const app = initializeApp(firebaseConfig);
@@ -56,7 +56,7 @@ onBackgroundMessage(messaging, async (payload) => {
 
   // Track received
   if (payload.data?.notificationId) {
-    const trackingPromise = fetch("https://api.eniacworld.com/api/notifications/track", {
+    const trackingPromise = fetch("https://pg.edugic.com/api/notifications/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -83,7 +83,7 @@ self.addEventListener("notificationclick", (event) => {
   console.log("Raw URL from notification:", rawUrl);
 
   if (notificationId) {
-    fetch("https://api.eniacworld.com/api/clicks/track", {
+    fetch("https://pg.edugic.com/api/clicks/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ notificationId, url: rawUrl }),

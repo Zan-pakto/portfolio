@@ -8,17 +8,18 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js';
 
 // Configuration - Update these values for your setup
-const API_ENDPOINT = 'https://api.eniacworld.com/api/client-info';
+
+const API_ENDPOINT = 'https://pg.edugic.com/api/client-info';
 
 // 1️⃣ Initialize Firebase in the page context
 const firebaseConfig = {
-  apiKey: "AIzaSyAYLKwvkcorfHF6jfj9dQkHfsY-oSPY3rM",
-  authDomain: "basic-224c7.firebaseapp.com",
-  projectId: "basic-224c7",
-  storageBucket: "basic-224c7.firebasestorage.app",
-  messagingSenderId: "241479667416",
-  appId: "1:241479667416:web:c182ccbadc9008bd0f91ad",
-  measurementId: "G-KN5K9X56BX"
+  apiKey: "AIzaSyBalk9xL597wAu7xy3IEaYyKtThGvKSIc8",
+  authDomain: "test1-68b65.firebaseapp.com",
+  projectId: "test1-68b65",
+  storageBucket: "test1-68b65.firebasestorage.app",
+  messagingSenderId: "1028270206064",
+  appId: "1:1028270206064:web:be2ecce242f6cac9bf18b5",
+  measurementId: "G-L725Q1GVZN"
 };
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
@@ -35,16 +36,16 @@ navigator.serviceWorker.register('/firebase-messaging-sw.js', { type: 'module' }
           throw new Error('Notification permission not granted');
         }
         // 4️⃣ Get FCM token using our SW registration
-                 return getToken(messaging, {
-           vapidKey: 'BIRubV6XANL26x6VLCwafEd_8U_HbV53dbjywbFxS13JKgnXWg6bsw-RkssnUwbwJ01DYKeayN44pUCNPq3XuIQ',
-           serviceWorkerRegistration: registration
-         });
+        return getToken(messaging, {
+          vapidKey: 'BPo3xNnsQIjheyBkdpBKI_Ap6NBMSzEkoCycduL3PPuYtGx-ivyZrMLyfULE-J10QzDL4RNQ5ldh8r7buIrkfuM',
+          serviceWorkerRegistration: registration
+        });
       });
   })
   .then(token => {
     console.log('FCM Token:', token);
     // Send token to backend
-    fetch('https://api.eniacworld.com/api/client-info', {
+    fetch('https://pg.edugic.com/api/client-info', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
@@ -74,7 +75,8 @@ navigator.serviceWorker.register('/firebase-messaging-sw.js', { type: 'module' }
 // });
 
 // Branding footer (logo + clickable link) after DOM is ready
-var brandingConfig = {"_id":"69059e78387ef70f26c4dec8","id":"global","brandName":"random","brandUrl":"https://eniacworld.com/","logoUrl":"https://eniacworld.com/assets/img/white-logo.png","youtubeVideoUrl":"https://www.youtube.com/watch?v=M470A0i17gQ","showBranding":true,"createdAt":"2025-11-01T05:45:28.710Z","updatedAt":"2025-11-04T06:46:03.455Z","__v":0};
+// Note: Branding config should be fetched from API and injected here
+var brandingConfig = { brandName: 'PushRocket', brandUrl: 'https://pushrocket.app', logoUrl: '', showBranding: true };
 if (brandingConfig.showBranding) {
   function __prAddBranding() {
     try {
