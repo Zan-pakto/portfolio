@@ -56,7 +56,7 @@ onBackgroundMessage(messaging, async (payload) => {
 
   // Track received
   if (payload.data?.notificationId) {
-    const trackingPromise = fetch("https://pg.edugic.com/api/notifications/track", {
+    const trackingPromise = fetch("https://demo.nexapush.com/api/notifications/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -83,7 +83,7 @@ self.addEventListener("notificationclick", (event) => {
   console.log("Raw URL from notification:", rawUrl);
 
   if (notificationId) {
-    fetch("https://pg.edugic.com/api/clicks/track", {
+    fetch("https://demo.nexapush.com/api/clicks/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ notificationId, url: rawUrl }),

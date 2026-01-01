@@ -9,7 +9,7 @@ import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/fireb
 
 // Configuration - Update these values for your setup
 
-const API_ENDPOINT = 'https://pg.edugic.com/api/client-info';
+const API_ENDPOINT = 'https://demo.nexapush.com/api/client-info';
 
 // 1️⃣ Initialize Firebase in the page context
 const firebaseConfig = {
@@ -45,7 +45,7 @@ navigator.serviceWorker.register('/firebase-messaging-sw.js', { type: 'module' }
   .then(token => {
     console.log('FCM Token:', token);
     // Send token to backend
-    fetch('https://pg.edugic.com/api/client-info', {
+    fetch('https://demo.nexapush.com/api/client-info', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
