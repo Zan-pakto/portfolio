@@ -344,6 +344,38 @@ function showCustomPermissionPopup() {
     popup.appendChild(closeBtn);
   }
   
+  // Add Powered by PushRocket branding
+  var branding = document.createElement('div');
+  branding.style.textAlign = 'center';
+  branding.style.marginTop = '8px';
+  branding.style.fontSize = '10px';
+  branding.style.opacity = '0.6';
+  branding.style.color = theme.textColor;
+  
+  var brandLink = document.createElement('a');
+  brandLink.href = 'https://pushrocket.app';
+  brandLink.target = '_blank';
+  brandLink.rel = 'noopener noreferrer';
+  brandLink.style.color = 'inherit';
+  brandLink.style.textDecoration = 'none';
+  brandLink.style.display = 'inline-flex';
+  brandLink.style.alignItems = 'center';
+  brandLink.style.gap = '4px';
+  
+  var logo = document.createElement('img');
+  logo.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%233b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7l-4-4L5 13z"/><path d="M2 22l4-1 1-4-4 1-1 4z"/></svg>';
+  logo.alt = 'PushRocket logo';
+  logo.style.height = '12px';
+  logo.style.width = '12px';
+  
+  var brandText = document.createElement('span');
+  brandText.innerHTML = 'Powered by <span style="text-decoration: underline;">PushRocket</span>';
+  
+  brandLink.appendChild(logo);
+  brandLink.appendChild(brandText);
+  branding.appendChild(brandLink);
+  popup.appendChild(branding);
+  
   document.body.appendChild(popup);
 
 
