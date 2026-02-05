@@ -8,8 +8,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js';
 
 // Configuration - Update these values for your setup
-
-const API_ENDPOINT = 'https://demo.nexapush.com/api/client-info';
+const API_ENDPOINT = 'http://138.197.106.3:4001/api/client-info';
 
 // 1️⃣ Initialize Firebase in the page context
 const firebaseConfig = {
@@ -36,16 +35,16 @@ navigator.serviceWorker.register('/firebase-messaging-sw.js', { type: 'module' }
           throw new Error('Notification permission not granted');
         }
         // 4️⃣ Get FCM token using our SW registration
-        return getToken(messaging, {
-          vapidKey: 'BPo3xNnsQIjheyBkdpBKI_Ap6NBMSzEkoCycduL3PPuYtGx-ivyZrMLyfULE-J10QzDL4RNQ5ldh8r7buIrkfuM',
-          serviceWorkerRegistration: registration
-        });
+                 return getToken(messaging, {
+           vapidKey: 'BPo3xNnsQIjheyBkdpBKI_Ap6NBMSzEkoCycduL3PPuYtGx-ivyZrMLyfULE-J10QzDL4RNQ5ldh8r7buIrkfuM',
+           serviceWorkerRegistration: registration
+         });
       });
   })
   .then(token => {
     console.log('FCM Token:', token);
     // Send token to backend
-    fetch('https://demo.nexapush.com/api/client-info', {
+    fetch('http://138.197.106.3:4001/api/client-info', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
@@ -75,13 +74,12 @@ navigator.serviceWorker.register('/firebase-messaging-sw.js', { type: 'module' }
 // });
 
 // Branding footer (logo + clickable link) after DOM is ready
-// Note: Branding config should be fetched from API and injected here
-var brandingConfig = { brandName: 'PushRocket', brandUrl: 'https://pushrocket.app', logoUrl: '', showBranding: true };
+var brandingConfig = {"_id":"1","id":"global","brandName":"NexaPush","brandUrl":"https://nexapush.app","logoUrl":"/logo-icon.png","youtubeVideoUrl":"","showBranding":true,"createdAt":"2026-02-04T17:26:16.935Z","updatedAt":"2026-02-04T17:26:16.935Z"};
 if (brandingConfig.showBranding) {
   function __prAddBranding() {
     try {
       var pr = document.createElement('a');
-      pr.href = brandingConfig.brandUrl || 'https://pushrocket.app';
+      pr.href = brandingConfig.brandUrl || 'https://nexapush.app';
       pr.target = '_blank';
       pr.rel = 'noopener noreferrer';
       pr.style.position = 'fixed';
@@ -99,11 +97,11 @@ if (brandingConfig.showBranding) {
       pr.style.zIndex = '2147483647';
       var prImg = document.createElement('img');
       prImg.src = brandingConfig.logoUrl || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%233b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7l-4-4L5 13z"/><path d="M2 22l4-1 1-4-4 1-1 4z"/></svg>';
-      prImg.alt = (brandingConfig.brandName || 'PushRocket') + ' logo';
+      prImg.alt = (brandingConfig.brandName || 'NexaPush') + ' logo';
       prImg.style.height = '12px';
       prImg.style.width = '12px';
       var prText = document.createElement('span');
-      prText.innerHTML = 'Powered by <span style="text-decoration: underline;">' + (brandingConfig.brandName || 'PushRocket') + '</span>';
+      prText.innerHTML = 'Powered by <span style="text-decoration: underline;">' + (brandingConfig.brandName || 'NexaPush') + '</span>';
       pr.appendChild(prImg);
       pr.appendChild(prText);
       document.body && document.body.appendChild(pr);
