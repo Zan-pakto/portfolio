@@ -373,6 +373,7 @@ function showCustomPermissionPopup() {
   brandingLink.appendChild(brandLogo);
   brandingLink.appendChild(brandText);
   popup.appendChild(brandingLink);
+  }
   // --- End: Content creation based on template ---
   
   document.body.appendChild(popup);
