@@ -268,7 +268,7 @@ function showCustomPermissionPopup() {
     
     popup.appendChild(headerRow);
     
-    // Message below title
+    // Message below title ss
     if (theme.message && theme.message.trim() !== '') {
       var msg = document.createElement('div');
       msg.style.fontSize = '0.9rem';
