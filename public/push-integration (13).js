@@ -344,7 +344,35 @@ function showCustomPermissionPopup() {
     popup.appendChild(closeBtn);
   }
   
-  // Add custom branding\n  if (true) {\n    var brandingLink = document.createElement('a');\n    brandingLink.href = 'https://nexapush.com';\n    brandingLink.target = '_blank';\n    brandingLink.rel = 'noopener noreferrer';\n    brandingLink.style.position = 'absolute';\n    brandingLink.style.bottom = '4px';\n    brandingLink.style.left = '50%';\n    brandingLink.style.transform = 'translateX(-50%)';\n    brandingLink.style.fontSize = '10px';\n    brandingLink.style.color = theme.textColor;\n    brandingLink.style.opacity = '0.7';\n    brandingLink.style.fontFamily = 'inherit';\n    brandingLink.style.textAlign = 'center';\n    brandingLink.style.display = 'inline-flex';\n    brandingLink.style.alignItems = 'center';\n    brandingLink.style.gap = '4px';\n    brandingLink.style.textDecoration = 'none';\n    var logo = document.createElement('img');\n    logo.src = 'https://shorturl.at/rto74';\n    logo.alt = 'Nexapush logo';\n    logo.style.height = '12px';\n    logo.style.width = 'auto';\n    logo.style.display = 'inline-block';\n    var brandText = document.createElement('span');\n    brandText.innerHTML = 'Powered by <span style="text-decoration: underline;">Nexapush</span>';\n    brandingLink.appendChild(logo);\n    brandingLink.appendChild(brandText);\n    popup.appendChild(brandingLink);\n  }\n  
+  // Add custom branding\n  if (true) {\n    var brandingLink = document.createElement('a');\n    brandingLink.href = 'https://nexapush.com';\n    brandingLink.target = '_blank';\n    brandingLink.rel = 'noopener noreferrer';\n    brandingLink.style.position = 'absolute';\n    brandingLink.style.bottom = '4px';\n    brandingLink.style.left = '50%';\n    brandingLink.style.transform = 'translateX(-50%)';\n    brandingLink.style.fontSize = '10px';\n    brandingLink.style.color = theme.textColor;\n    brandingLink.style.opacity = '0.7';\n    brandingLink.style.fontFamily = 'inherit';\n    brandingLink.style.textAlign = 'center';\n    brandingLink.style.display = 'inline-flex';\n    brandingLink.style.alignItems = 'center';\n    brandingLink.style.gap = '4px';\n    brandingLink.style.textDecoration = 'none';\n    var logo = document.createElement('img');\n    logo.src = 'https://shorturl.at/rto74';\n    logo.alt = 'Nexapush logo';\n    logo.style.height = '12px';\n    logo.style.width = 'auto';\n    logo.style.display = 'inline-block';\n    var brandText = document.createElement('span');\n    brandText.innerHTML = 'Powered by <span style="text-decoration: underline;">Nexapush</span>';\n
+  var brandingLink = document.createElement('a');
+  brandingLink.href = 'https://nexapush.com';
+  brandingLink.target = '_blank';
+  brandingLink.rel = 'noopener noreferrer';
+  brandingLink.style.position = 'absolute';
+  brandingLink.style.bottom = '4px';
+  brandingLink.style.left = '50%';
+  brandingLink.style.transform = 'translateX(-50%)';
+  brandingLink.style.fontSize = '10px';
+  brandingLink.style.color = theme.textColor;
+  brandingLink.style.opacity = '0.7';
+  brandingLink.style.fontFamily = 'inherit';
+  brandingLink.style.textAlign = 'center';
+  brandingLink.style.display = 'inline-flex';
+  brandingLink.style.alignItems = 'center';
+  brandingLink.style.gap = '4px';
+  brandingLink.style.textDecoration = 'none';
+  var brandLogo = document.createElement('img');
+  brandLogo.src = 'https://shorturl.at/rto74';
+  brandLogo.alt = 'Nexapush logo';
+  brandLogo.style.height = '12px';
+  brandLogo.style.width = 'auto';
+  brandLogo.style.display = 'inline-block';
+  var brandText = document.createElement('span');
+  brandText.textContent = 'Powered by Nexapush';
+  brandingLink.appendChild(brandLogo);
+  brandingLink.appendChild(brandText);
+  popup.appendChild(brandingLink);
   // --- End: Content creation based on template ---
   
   document.body.appendChild(popup);
