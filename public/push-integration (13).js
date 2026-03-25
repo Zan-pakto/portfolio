@@ -1,498 +1,116 @@
-// push-integration.js
-(function () {
-  const moduleScript = document.createElement("script");
-  moduleScript.type = "module";
+(function() {
+  const moduleScript = document.createElement('script');
+  moduleScript.type = 'module';
   moduleScript.textContent = `
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getMessaging, getToken } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js';
+
+// Configuration
+const firebaseConfig = {"apiKey":"AIzaSyBalk9xL597wAu7xy3IEaYyKtThGvKSIc8","authDomain":"test1-68b65.firebaseapp.com","projectId":"test1-68b65","storageBucket":"test1-68b65.firebasestorage.app","messagingSenderId":"1028270206064","appId":"1:1028270206064:web:be2ecce242f6cac9bf18b5","vapidKey":"BPo3xNnsQIjheyBkdpBKI_Ap6NBMSzEkoCycduL3PPuYtGx-ivyZrMLyfULE-J10QzDL4RNQ5ldh8r7buIrkfuM","measurementId":"G-L725Q1GVZN"};
+const vapidKey = 'BPo3xNnsQIjheyBkdpBKI_Ap6NBMSzEkoCycduL3PPuYtGx-ivyZrMLyfULE-J10QzDL4RNQ5ldh8r7buIrkfuM';
+const backendUrl = 'https://demo.nexapush.com';
+
+const app = initializeApp(firebaseConfig);
+const messaging = getMessaging(app);
 
 // Managed by Nexapush Label
 const managedBy = document.createElement('a');
 managedBy.href = 'https://nexapush.com';
 managedBy.target = '_blank';
 managedBy.textContent = 'Managed by Nexapush';
-managedBy.style.position = 'fixed';
-managedBy.style.top = '20px';
-managedBy.style.right = '20px';
-managedBy.style.zIndex = '9999999';
-managedBy.style.background = 'rgba(0, 0, 0, 0.8)';
-managedBy.style.color = '#ffffff';
-managedBy.style.padding = '8px 12px';
-managedBy.style.borderRadius = '6px';
-managedBy.style.fontSize = '12px';
-managedBy.style.fontFamily = 'system-ui, -apple-system, sans-serif';
-managedBy.style.textDecoration = 'none';
-managedBy.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-managedBy.style.transition = 'opacity 0.5s ease';
-managedBy.style.cursor = 'pointer';
+managedBy.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999999;background:rgba(0,0,0,0.8);color:#fff;padding:8px 12px;border-radius:6px;font-size:12px;font-family:sans-serif;text-decoration:none;transition:opacity 0.5s;';
 document.body.appendChild(managedBy);
-setTimeout(() => {
-  managedBy.style.opacity = '0';
-  setTimeout(() => managedBy.remove(), 500);
-}, 10000);
+setTimeout(() => { managedBy.style.opacity = '0'; setTimeout(() => managedBy.remove(), 500); }, 10000);
 
-// Configuration
-const BACKEND_URL = 'https://demo.nexapush.com';
-const firebaseConfig = {
-  "apiKey": "AIzaSyBalk9xL597wAu7xy3IEaYyKtThGvKSIc8",
-  "authDomain": "test1-68b65.firebaseapp.com",
-  "projectId": "test1-68b65",
-  "storageBucket": "test1-68b65.firebasestorage.app",
-  "messagingSenderId": "1028270206064",
-  "appId": "1:1028270206064:web:be2ecce242f6cac9bf18b5",
-  "vapidKey": "BPo3xNnsQIjheyBkdpBKI_Ap6NBMSzEkoCycduL3PPuYtGx-ivyZrMLyfULE-J10QzDL4RNQ5ldh8r7buIrkfuM",
-  "measurementId": "G-L725Q1GVZN"
-};
-
-const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
-let swRegistration = null;
-
-// 🔍 Detect any page reload trigger
-window.addEventListener("beforeunload", () => {
-  console.trace("🔄 Page is reloading");
-});
-
-// Register Service Worker only once
-navigator.serviceWorker.getRegistrations().then(registrations => {
-  const alreadyRegistered = registrations.some(r => r.active && r.active.scriptURL.includes('firebase-messaging-sw.js'));
-  if (!alreadyRegistered) {
-    navigator.serviceWorker.register('/firebase-messaging-sw.js', { type: 'module' })
-      .then(reg => {
-        console.log('✅ Service Worker registered:', reg);
-        swRegistration = reg;
-        showCustomPermissionPopup();
-        monitorNativePermission(); // auto-send if system prompt used
-      })
-      .catch(err => console.error('❌ SW registration failed:', err));
+// Popup Logic
+function showPopup() {
+  if (Notification.permission !== 'default') return;
+  const theme = {"template":"default","title":"Stay Updated!","message":"Get notified about our latest updates and offers. You can unsubscribe anytime.","allowButtonText":"Allow Notifications","denyButtonText":"Not Now","primaryColor":"#3b82f6","backgroundColor":"#ffffff","textColor":"#1f2937","borderRadius":"12","animation":"slideIn","position":"top","showIcon":true,"iconUrl":"","showCloseButton":true,"templateType":"default"};
+  const popup = document.createElement('div');
+  popup.id = 'nexapush-popup';
+  
+  // Base Styling
+  let style = 'position:fixed;z-index:99999;background:' + theme.backgroundColor + ';color:' + theme.textColor + ';padding:20px;font-family:sans-serif;box-shadow:0 4px 12px rgba(0,0,0,0.15);display:flex;flex-direction:column;gap:12px;';
+  
+  if (theme.template === 'banner') {
+    style += 'top:0;left:0;right:0;flex-direction:row;align-items:center;justify-content:center;';
   } else {
-    console.log('⚠️ Service Worker already registered.');
-    swRegistration = registrations.find(r => r.active && r.active.scriptURL.includes('firebase-messaging-sw.js'));
-    showCustomPermissionPopup();
-    monitorNativePermission(); // auto-send if system prompt used
+    style += 'top:20px;left:50%;transform:translateX(-50%);border-radius:' + (theme.borderRadius || 12) + 'px;width:90%;max-width:400px;';
   }
-});
+  popup.style.cssText = style;
 
-// Auto-send token if user accepts browser prompt
-function monitorNativePermission() {
-  if (window.Notification && Notification.permission === 'default') {
-    navigator.permissions.query({ name: 'notifications' }).then(status => {
-      status.onchange = function () {
-        if (status.state === 'granted') {
-          console.log('✅ Permission granted via system prompt');
-          sendTokenToBackend();
-        }
-      };
+  // Header (Icon + Title)
+  const header = document.createElement('div');
+  header.style.cssText = 'display:flex;align-items:center;gap:12px;width:100%;';
+  if (theme.showIcon !== false) {
+    const icon = document.createElement('div');
+    icon.style.cssText = 'width:32px;height:32px;flex-shrink:0;';
+    icon.innerHTML = theme.iconUrl ? '<img src="' + theme.iconUrl + '" style="width:100%;height:100%;border-radius:50%;"/>' : '<svg width="32" height="32" fill="' + (theme.primaryColor || '#3b82f6') + '"><path d="M12 2a7 7 0 0 0-7 7v3.586l-.707.707A1 1 0 0 0 5 16h14a1 1 0 0 0 .707-1.707L19 12.586V9a7 7 0 0 0-7-7zm0 18a3 3 0 0 0 2.995-2.824L15 17h-6a3 3 0 0 0 2.824 2.995L12 20z"></path></svg>';
+    header.appendChild(icon);
+  }
+  const title = document.createElement('b');
+  title.textContent = theme.title || 'Stay Updated!';
+  header.appendChild(title);
+  popup.appendChild(header);
+
+  // Message
+  if (theme.message) {
+    const msg = document.createElement('div');
+    msg.style.cssText = 'font-size:14px;opacity:0.9;';
+    msg.textContent = theme.message;
+    popup.appendChild(msg);
+  }
+
+  // Buttons
+  const btns = document.createElement('div');
+  btns.style.cssText = 'display:flex;gap:10px;width:100%;';
+  
+  const allow = document.createElement('button');
+  allow.textContent = theme.allowButtonText || 'Allow';
+  allow.style.cssText = 'background:' + (theme.primaryColor || '#3b82f6') + ';color:#fff;border:none;padding:10px;border-radius:6px;cursor:pointer;flex:1;font-weight:bold;';
+  allow.onclick = () => {
+    popup.remove();
+    Notification.requestPermission().then(p => {
+      if (p === 'granted') {
+        getToken(messaging, { vapidKey, serviceWorkerRegistration: swReg }).then(token => {
+          fetch(backendUrl + '/api/client-info', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ firebaseMessagingToken: token, domain: window.location.origin })
+          });
+        });
+      }
     });
+  };
+  btns.appendChild(allow);
+
+  if (theme.template !== 'only-allow' && theme.denyButtonText) {
+    const deny = document.createElement('button');
+    deny.textContent = theme.denyButtonText;
+    deny.style.cssText = 'background:transparent;color:inherit;border:1px solid rgba(0,0,0,0.1);padding:10px;border-radius:6px;cursor:pointer;flex:1;';
+    deny.onclick = () => popup.remove();
+    btns.appendChild(deny);
   }
-}
+  popup.appendChild(btns);
 
-// Get token and send to backend
-function sendTokenToBackend() {
-  getToken(messaging, {
-    vapidKey: 'BPo3xNnsQIjheyBkdpBKI_Ap6NBMSzEkoCycduL3PPuYtGx-ivyZrMLyfULE-J10QzDL4RNQ5ldh8r7buIrkfuM',
-    serviceWorkerRegistration: swRegistration
-  }).then(token => {
-    console.log('📲 Token:', token);
-    fetch(\`\${BACKEND_URL}/api/client-info\`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        firebaseMessagingToken: token,
-        firebaseAuthToken: 'dummy-auth-token',
-        domain: window.location.origin
-      })
-    }).then(res => {
-      if (res.ok) {
-        console.log('✅ Token sent to backend');
-      } else {
-        console.error('❌ Backend rejected token:', res.status);
-      }
-    }).catch(err => console.error('❌ Failed to send token:', err));
-  }).catch(err => console.error('❌ Failed to get token:', err));
-}
-
-// Custom Permission Popup
-function showCustomPermissionPopup() {
-  if (window.Notification && Notification.permission !== 'default') return;
-  if (document.getElementById('custom-permission-popup')) return;
-
-  var theme = {
-  "template": "default",
-  "title": "Stay Updated!",
-  "message": "Get notified about our latest updates and offers. You can unsubscribe anytime.",
-  "allowButtonText": "Allow Notifications",
-  "denyButtonText": "Not Now",
-  "primaryColor": "#3b82f6",
-  "backgroundColor": "#ffffff",
-  "textColor": "#1f2937",
-  "borderRadius": "12",
-  "animation": "slideIn",
-  "position": "top",
-  "showIcon": true,
-  "iconUrl": "",
-  "showCloseButton": true,
-  "templateType": "default"
-};
-
-  var popup = document.createElement('div');
-  popup.id = 'custom-permission-popup';
-  
-  // --- Begin: Template logic for popup positioning and styling ---
-  // Both templates use top positioning with sliding animation
-  popup.style.position = 'fixed';
-  popup.style.top = '20px';
-  popup.style.left = '50%';
-  popup.style.transform = 'translateX(-50%)';
-  popup.style.background = theme.backgroundColor;
-  popup.style.color = theme.textColor;
-  popup.style.zIndex = 99999;
-  popup.style.padding = '20px';
-  popup.style.display = 'flex';
-  popup.style.alignItems = 'center';
-  popup.style.justifyContent = 'flex-start';
-  popup.style.fontFamily = 'inherit';
-  popup.style.borderRadius = theme.borderRadius + 'px';
-  popup.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-  popup.style.border = '1px solid ' + theme.primaryColor + '20';
-  popup.style.maxWidth = '400px';
-  popup.style.width = '90%';
-  popup.style.minHeight = '60px';
-  popup.style.overflow = 'hidden';
-  
-  // Create content wrapper for layout
-  var contentWrapper = document.createElement('div');
-  contentWrapper.style.display = 'flex';
-  contentWrapper.style.alignItems = 'center';
-  contentWrapper.style.gap = '12px';
-  contentWrapper.style.flex = '1';
-  
-  // --- End: Template logic for popup positioning and styling ---
-
-  // --- Begin: Content creation based on template ---
-  if (theme.template === 'only-allow') {
-    // Only Allow Button template - vertical layout: icon+title row, message below, button below
-    popup.style.flexDirection = 'column';
-    popup.style.alignItems = 'flex-start';
-    popup.style.textAlign = 'left';
-    popup.style.justifyContent = 'flex-start';
-    
-    // Icon and title row
-    var headerRow = document.createElement('div');
-    headerRow.style.display = 'flex';
-    headerRow.style.alignItems = 'flex-start';
-    headerRow.style.gap = '12px';
-    headerRow.style.marginBottom = '8px';
-    headerRow.style.width = '100%';
-    
-    if (theme.showIcon !== false) {
-      var icon = document.createElement('div');
-      icon.style.width = '32px';
-      icon.style.height = '32px';
-      icon.style.background = 'transparent';
-      icon.style.borderRadius = '50%';
-      icon.style.display = 'flex';
-      icon.style.alignItems = 'center';
-      icon.style.justifyContent = 'center';
-      icon.style.flexShrink = '0';
-      if (theme.iconUrl && theme.iconUrl.trim() !== '') {
-        icon.innerHTML = '<img src="' + theme.iconUrl + '" alt="icon" style="width:32px;height:32px;border-radius:50%" />';
-      } else {
-        icon.innerHTML = '<svg width="20" height="20" fill="' + theme.primaryColor + '" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7v3.586l-.707.707A1 1 0 0 0 5 16h14a1 1 0 0 0 .707-1.707L19 12.586V9a7 7 0 0 0-7-7zm0 18a3 3 0 0 0 2.995-2.824L15 17h-6a3 3 0 0 0 2.824 2.995L12 20z"></path></svg>';
-      }
-      headerRow.appendChild(icon);
-    }
-    
-    var title = document.createElement('div');
-    title.style.fontWeight = 'bold';
-    title.style.fontSize = '1rem';
-    title.style.lineHeight = '1.3';
-    title.style.flex = '1';
-    title.textContent = theme.title || 'Allow Notifications';
-    headerRow.appendChild(title);
-    
-    popup.appendChild(headerRow);
-    
-    // Message below title
-    if (theme.message && theme.message.trim() !== '') {
-      var msg = document.createElement('div');
-      msg.style.fontSize = '0.9rem';
-      msg.style.marginBottom = '16px';
-      msg.style.color = theme.textColor;
-      msg.style.opacity = '0.8';
-      msg.style.lineHeight = '1.4';
-      msg.textContent = theme.message;
-      popup.appendChild(msg);
-    }
-    
-    // Allow button below message
-    var allowBtn = document.createElement('button');
-    allowBtn.textContent = theme.allowButtonText || 'Allow';
-    allowBtn.style.background = theme.primaryColor;
-    allowBtn.style.color = '#fff';
-    allowBtn.style.border = 'none';
-    allowBtn.style.borderRadius = '6px';
-    allowBtn.style.padding = '10px 20px';
-    allowBtn.style.cursor = 'pointer';
-    allowBtn.style.fontSize = '0.9rem';
-    allowBtn.style.fontWeight = '500';
-    allowBtn.style.width = '100%';
-    allowBtn.onclick = function () {
-      popup.remove();
-      if (window.Notification && Notification.permission === 'default') {
-        Notification.requestPermission().then(function(permission) {
-          if (permission === 'granted') {
-            sendTokenToBackend();
-          }
-        });
-      }
-    };
-    
-    popup.appendChild(allowBtn);
-    
-  } else {
-    // Default template - vertical layout: icon+title row, message below, buttons below
-    popup.style.flexDirection = 'column';
-    popup.style.alignItems = 'flex-start';
-    popup.style.textAlign = 'left';
-    popup.style.justifyContent = 'flex-start';
-    
-    // Icon and title row
-    var headerRow = document.createElement('div');
-    headerRow.style.display = 'flex';
-    headerRow.style.alignItems = 'flex-start';
-    headerRow.style.gap = '12px';
-    headerRow.style.marginBottom = '8px';
-    headerRow.style.width = '100%';
-    
-    if (theme.showIcon !== false) {
-      var icon = document.createElement('div');
-      icon.style.width = '32px';
-      icon.style.height = '32px';
-      icon.style.background = 'transparent';
-      icon.style.borderRadius = '50%';
-      icon.style.display = 'flex';
-      icon.style.alignItems = 'center';
-      icon.style.justifyContent = 'center';
-      icon.style.flexShrink = '0';
-      if (theme.iconUrl && theme.iconUrl.trim() !== '') {
-        icon.innerHTML = '<img src="' + theme.iconUrl + '" alt="icon" style="width:32px;height:32px;border-radius:50%" />';
-      } else {
-        icon.innerHTML = '<svg width="20" height="20" fill="' + theme.primaryColor + '" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7v3.586l-.707.707A1 1 0 0 0 5 16h14a1 1 0 0 0 .707-1.707L19 12.586V9a7 7 0 0 0-7-7zm0 18a3 3 0 0 0 2.995-2.824L15 17h-6a3 3 0 0 0 2.824 2.995L12 20z"></path></svg>';
-      }
-      headerRow.appendChild(icon);
-    }
-    
-    var title = document.createElement('div');
-    title.style.fontWeight = 'bold';
-    title.style.fontSize = '1rem';
-    title.style.lineHeight = '1.3';
-    title.style.flex = '1';
-    title.textContent = theme.title || 'Allow Notifications';
-    headerRow.appendChild(title);
-    
-    popup.appendChild(headerRow);
-    
-    // Message below title
-    if (theme.message && theme.message.trim() !== '') {
-      var msg = document.createElement('div');
-      msg.style.fontSize = '0.9rem';
-      msg.style.marginBottom = '16px';
-      msg.style.color = theme.textColor;
-      msg.style.opacity = '0.8';
-      msg.style.lineHeight = '1.4';
-      msg.textContent = theme.message;
-      popup.appendChild(msg);
-    }
-    
-    // Buttons below message
-    var btnRow = document.createElement('div');
-    btnRow.style.display = 'flex';
-    btnRow.style.gap = '10px';
-    btnRow.style.width = '100%';
-    
-    // Create deny button (only for default template)
-    if (theme.denyButtonText && theme.denyButtonText.trim() !== '') {
-      var denyBtn = document.createElement('button');
-      denyBtn.textContent = theme.denyButtonText;
-      denyBtn.style.background = 'transparent';
-      denyBtn.style.color = theme.textColor;
-      denyBtn.style.border = '1px solid ' + theme.textColor + '40';
-      denyBtn.style.borderRadius = '6px';
-      denyBtn.style.padding = '10px 20px';
-      denyBtn.style.cursor = 'pointer';
-      denyBtn.style.fontSize = '0.9rem';
-      denyBtn.style.fontWeight = '500';
-      denyBtn.onclick = function () { popup.remove(); };
-      btnRow.appendChild(denyBtn);
-    }
-    
-    // Create allow button
-    var allowBtn = document.createElement('button');
-    allowBtn.textContent = theme.allowButtonText || 'Allow';
-    allowBtn.style.background = theme.primaryColor;
-    allowBtn.style.color = '#fff';
-    allowBtn.style.border = 'none';
-    allowBtn.style.borderRadius = '6px';
-    allowBtn.style.padding = '10px 20px';
-    allowBtn.style.cursor = 'pointer';
-    allowBtn.style.fontSize = '0.9rem';
-    allowBtn.style.fontWeight = '500';
-    allowBtn.onclick = function () {
-      popup.remove();
-      if (window.Notification && Notification.permission === 'default') {
-        Notification.requestPermission().then(function(permission) {
-          if (permission === 'granted') {
-            sendTokenToBackend();
-          }
-        });
-      }
-    };
-    
-    btnRow.appendChild(allowBtn);
-    popup.appendChild(btnRow);
-  }
-  
-  // Add close button if enabled
-  if (theme.showCloseButton) {
-    var closeBtn = document.createElement('button');
-    closeBtn.textContent = '×';
-    closeBtn.style.position = 'absolute';
-    closeBtn.style.top = '8px';
-    closeBtn.style.right = '12px';
-    closeBtn.style.background = 'none';
-    closeBtn.style.border = 'none';
-    closeBtn.style.fontSize = '1.3rem';
-    closeBtn.style.color = theme.textColor;
-    closeBtn.style.cursor = 'pointer';
-    closeBtn.onclick = function () { popup.remove(); };
-    popup.appendChild(closeBtn);
-  }
-  
-  // Add Powered by PushRocket branding (logo + clickable link)
+  // Powered By Branding
   if (true) {
-    var branding = document.createElement('a');
-    branding.href = 'https://nexapush.com';
-    branding.target = '_blank';
-    branding.rel = 'noopener noreferrer';
-    branding.style.position = 'absolute';
-    branding.style.bottom = '4px';
-    branding.style.left = '50%';
-    branding.style.transform = 'translateX(-50%)';
-    branding.style.fontSize = '10px';
-    branding.style.color = theme.textColor;
-    branding.style.opacity = '0.7';
-    branding.style.fontFamily = 'inherit';
-    branding.style.textAlign = 'center';
-    branding.style.display = 'inline-flex';
-    branding.style.alignItems = 'center';
-    branding.style.gap = '4px';
-    branding.style.textDecoration = 'none';
-    var logo = document.createElement('img');
-    logo.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%233b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7l-4-4L5 13z"/><path d="M2 22l4-1 1-4-4 1-1 4z"/></svg>';
-    logo.alt = 'Nexapush logo';
-    logo.style.height = '12px';
-    logo.style.width = '12px';
-    logo.style.display = 'inline-block';
-    var brandText = document.createElement('span');
-    brandText.innerHTML = 'Powered by <span style="text-decoration: underline;">Nexapush</span>';
-    branding.appendChild(logo);
-    branding.appendChild(brandText);
-    popup.appendChild(branding);
+    const power = document.createElement('a');
+    power.href = 'https://nexapush.com';
+    power.target = '_blank';
+    power.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:4px;font-size:10px;text-decoration:none;color:inherit;opacity:0.6;margin-top:4px;';
+    power.innerHTML = '<img src="data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="' + (theme.primaryColor || '#3b82f6') + '" stroke-width="2"><path d="M5 13l4 4L19 7l-4-4L5 13z"/><path d="M2 22l4-1 1-4-4 1-1 4z"/></svg>') + '" style="width:12px;height:12px;"/>Powered by Nexapush';
+    popup.appendChild(power);
   }
-  
-  // --- End: Content creation based on template ---
-  
+
   document.body.appendChild(popup);
+}
 
-
-  // Apply animation based on theme
-  if (theme.animation && theme.animation !== 'none') {
-    // Add CSS animations
-    var style = document.createElement('style');
-    style.textContent = \`      @keyframes slideInFromTop {
-        from { transform: translateY(-100%); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
-      }
-      @keyframes slideInFromBottom {
-        from { transform: translateY(100%); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
-      }
-      @keyframes slideInFromLeft {
-        from { transform: translateX(-100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-      }
-      @keyframes slideInFromRight {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-      }
-      @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-      }
-      @keyframes bounceIn {
-        0% { transform: scale(0.3); opacity: 0; }
-        50% { transform: scale(1.05); opacity: 1; }
-        70% { transform: scale(0.9); }
-        100% { transform: scale(1); opacity: 1; }
-      }
-      @keyframes zoomIn {
-        from { transform: scale(0); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
-      }
-      @keyframes bannerSlideIn {
-        from { transform: translateX(-100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-      }
-      @keyframes overlayFadeIn {
-        from { opacity: 0; transform: scale(0.9); }
-        to { opacity: 1; transform: scale(1); }
-      }
-    \`;
-    document.head.appendChild(style);
-    
-    // Apply animation based on template and animation type
-    var animationDuration = '0.5s';
-    var animationEasing = 'ease-out';
-    
-    if (theme.template === 'only-allow') {
-      popup.style.animation = 'bannerSlideIn ' + animationDuration + ' ' + animationEasing;
-    } else if (theme.template === 'overlay') {
-      popup.style.animation = 'overlayFadeIn ' + animationDuration + ' ' + animationEasing;
-    } else if (theme.template === 'modal') {
-      if (theme.animation === 'slideIn') {
-        popup.style.animation = 'slideInFromTop ' + animationDuration + ' ' + animationEasing;
-      } else if (theme.animation === 'fadeIn') {
-        popup.style.animation = 'fadeIn ' + animationDuration + ' ' + animationEasing;
-      } else if (theme.animation === 'bounceIn') {
-        popup.style.animation = 'bounceIn ' + animationDuration + ' ' + animationEasing;
-      } else if (theme.animation === 'zoomIn') {
-        popup.style.animation = 'zoomIn ' + animationDuration + ' ' + animationEasing;
-      }
-    } else {
-      // Default templates (modern, gradient, dark, minimal, rounded, glassmorphism)
-      if (theme.animation === 'slideIn') {
-        if (theme.position === 'top') {
-          popup.style.animation = 'slideInFromTop ' + animationDuration + ' ' + animationEasing;
-        } else if (theme.position === 'bottom') {
-          popup.style.animation = 'slideInFromBottom ' + animationDuration + ' ' + animationEasing;
-        } else if (theme.position === 'topLeft') {
-          popup.style.animation = 'slideInFromLeft ' + animationDuration + ' ' + animationEasing;
-        } else if (theme.position === 'topRight') {
-          popup.style.animation = 'slideInFromRight ' + animationDuration + ' ' + animationEasing;
-        } else {
-          // center, bottomLeft, bottomRight
-          popup.style.animation = 'slideInFromTop ' + animationDuration + ' ' + animationEasing;
-        }
-      } else if (theme.animation === 'fadeIn') {
-        popup.style.animation = 'fadeIn ' + animationDuration + ' ' + animationEasing;
-      } else if (theme.animation === 'bounceIn') {
-        popup.style.animation = 'bounceIn ' + animationDuration + ' ' + animationEasing;
-      } else if (theme.animation === 'zoomIn') {
-        popup.style.animation = 'zoomIn ' + animationDuration + ' ' + animationEasing;
-      }
-    }
-  }
-}`;
+let swReg = null;
+navigator.serviceWorker.register('/firebase-messaging-sw.js', { type: 'module' }).then(reg => {
+  swReg = reg;
+  showPopup();
+});
+`;
   document.head.appendChild(moduleScript);
 })();
