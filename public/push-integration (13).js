@@ -98,9 +98,9 @@ function showPopup() {
     const power = document.createElement('a');
     power.href = 'https://nexapush.com';
     power.target = '_blank';
-    power.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:4px;font-size:10px;text-decoration:none;color:inherit;opacity:0.6;margin-top:4px;';
+    power.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;text-decoration:none;color:inherit;opacity:0.9;margin-top:8px;';
     const logoSrc = "https://shorturl.at/rto74".startsWith('http') ? "https://shorturl.at/rto74" : backendUrl + "https://shorturl.at/rto74";
-    power.innerHTML = '<img src="' + logoSrc + '" style="width:18px;height:18px;object-fit:contain;margin-right:2px;"/>Powered by Nexapush';
+    power.innerHTML = '<img src="' + logoSrc + '" style="width:32px;height:32px;object-fit:contain;margin-right:4px;"/>Powered by Nexapush';
     popup.appendChild(power);
   }
 
