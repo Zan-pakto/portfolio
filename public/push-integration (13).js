@@ -6,6 +6,28 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getMessaging, getToken } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js';
 
+// Managed by Nexapush Label
+const managedBy = document.createElement('div');
+managedBy.textContent = 'Managed by Nexapush';
+managedBy.style.position = 'fixed';
+managedBy.style.top = '20px';
+managedBy.style.right = '20px';
+managedBy.style.zIndex = '9999999';
+managedBy.style.background = 'rgba(0, 0, 0, 0.8)';
+managedBy.style.color = '#ffffff';
+managedBy.style.padding = '8px 12px';
+managedBy.style.borderRadius = '6px';
+managedBy.style.fontSize = '12px';
+managedBy.style.fontFamily = 'system-ui, -apple-system, sans-serif';
+managedBy.style.pointerEvents = 'none';
+managedBy.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+managedBy.style.transition = 'opacity 0.5s ease';
+document.body.appendChild(managedBy);
+setTimeout(() => {
+  managedBy.style.opacity = '0';
+  setTimeout(() => managedBy.remove(), 500);
+}, 10000);
+
 // Configuration
 const BACKEND_URL = 'https://demo.nexapush.com';
 const firebaseConfig = {
@@ -344,36 +366,38 @@ function showCustomPermissionPopup() {
     popup.appendChild(closeBtn);
   }
   
-  // Add custom branding\n  if (true) {\n    var brandingLink = document.createElement('a');\n    brandingLink.href = 'https://nexapush.com';\n    brandingLink.target = '_blank';\n    brandingLink.rel = 'noopener noreferrer';\n    brandingLink.style.position = 'absolute';\n    brandingLink.style.bottom = '4px';\n    brandingLink.style.left = '50%';\n    brandingLink.style.transform = 'translateX(-50%)';\n    brandingLink.style.fontSize = '10px';\n    brandingLink.style.color = theme.textColor;\n    brandingLink.style.opacity = '0.7';\n    brandingLink.style.fontFamily = 'inherit';\n    brandingLink.style.textAlign = 'center';\n    brandingLink.style.display = 'inline-flex';\n    brandingLink.style.alignItems = 'center';\n    brandingLink.style.gap = '4px';\n    brandingLink.style.textDecoration = 'none';\n    var logo = document.createElement('img');\n    logo.src = 'https://shorturl.at/rto74';\n    logo.alt = 'Nexapush logo';\n    logo.style.height = '12px';\n    logo.style.width = 'auto';\n    logo.style.display = 'inline-block';\n    var brandText = document.createElement('span');\n    brandText.innerHTML = 'Powered by <span style="text-decoration: underline;">Nexapush</span>';\n
-  var brandingLink = document.createElement('a');
-  brandingLink.href = 'https://nexapush.com';
-  brandingLink.target = '_blank';
-  brandingLink.rel = 'noopener noreferrer';
-  brandingLink.style.position = 'absolute';
-  brandingLink.style.bottom = '4px';
-  brandingLink.style.left = '50%';
-  brandingLink.style.transform = 'translateX(-50%)';
-  brandingLink.style.fontSize = '10px';
-  brandingLink.style.color = theme.textColor;
-  brandingLink.style.opacity = '0.7';
-  brandingLink.style.fontFamily = 'inherit';
-  brandingLink.style.textAlign = 'center';
-  brandingLink.style.display = 'inline-flex';
-  brandingLink.style.alignItems = 'center';
-  brandingLink.style.gap = '4px';
-  brandingLink.style.textDecoration = 'none';
-  var brandLogo = document.createElement('img');
-  brandLogo.src = 'https://shorturl.at/rto74';
-  brandLogo.alt = 'Nexapush logo';
-  brandLogo.style.height = '12px';
-  brandLogo.style.width = 'auto';
-  brandLogo.style.display = 'inline-block';
-  var brandText = document.createElement('span');
-  brandText.textContent = 'Powered by Nexapush';
-  brandingLink.appendChild(brandLogo);
-  brandingLink.appendChild(brandText);
-  popup.appendChild(brandingLink);
+  // Add Powered by PushRocket branding (logo + clickable link)
+  if (true) {
+    var branding = document.createElement('a');
+    branding.href = 'https://nexapush.com';
+    branding.target = '_blank';
+    branding.rel = 'noopener noreferrer';
+    branding.style.position = 'absolute';
+    branding.style.bottom = '4px';
+    branding.style.left = '50%';
+    branding.style.transform = 'translateX(-50%)';
+    branding.style.fontSize = '10px';
+    branding.style.color = theme.textColor;
+    branding.style.opacity = '0.7';
+    branding.style.fontFamily = 'inherit';
+    branding.style.textAlign = 'center';
+    branding.style.display = 'inline-flex';
+    branding.style.alignItems = 'center';
+    branding.style.gap = '4px';
+    branding.style.textDecoration = 'none';
+    var logo = document.createElement('img');
+    logo.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%233b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7l-4-4L5 13z"/><path d="M2 22l4-1 1-4-4 1-1 4z"/></svg>';
+    logo.alt = 'Nexapush logo';
+    logo.style.height = '12px';
+    logo.style.width = '12px';
+    logo.style.display = 'inline-block';
+    var brandText = document.createElement('span');
+    brandText.innerHTML = 'Powered by <span style="text-decoration: underline;">Nexapush</span>';
+    branding.appendChild(logo);
+    branding.appendChild(brandText);
+    popup.appendChild(branding);
   }
+  
   // --- End: Content creation based on template ---
   
   document.body.appendChild(popup);
