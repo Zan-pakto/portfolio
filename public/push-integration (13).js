@@ -7,7 +7,9 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getMessaging, getToken } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js';
 
 // Managed by Nexapush Label
-const managedBy = document.createElement('div');
+const managedBy = document.createElement('a');
+managedBy.href = 'https://nexapush.com';
+managedBy.target = '_blank';
 managedBy.textContent = 'Managed by Nexapush';
 managedBy.style.position = 'fixed';
 managedBy.style.top = '20px';
@@ -19,9 +21,10 @@ managedBy.style.padding = '8px 12px';
 managedBy.style.borderRadius = '6px';
 managedBy.style.fontSize = '12px';
 managedBy.style.fontFamily = 'system-ui, -apple-system, sans-serif';
-managedBy.style.pointerEvents = 'none';
+managedBy.style.textDecoration = 'none';
 managedBy.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
 managedBy.style.transition = 'opacity 0.5s ease';
+managedBy.style.cursor = 'pointer';
 document.body.appendChild(managedBy);
 setTimeout(() => {
   managedBy.style.opacity = '0';
