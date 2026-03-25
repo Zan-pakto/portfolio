@@ -99,7 +99,8 @@ function showPopup() {
     power.href = 'https://nexapush.com';
     power.target = '_blank';
     power.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:4px;font-size:10px;text-decoration:none;color:inherit;opacity:0.6;margin-top:4px;';
-    power.innerHTML = '<img src="data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="' + (theme.primaryColor || '#3b82f6') + '" stroke-width="2"><path d="M5 13l4 4L19 7l-4-4L5 13z"/><path d="M2 22l4-1 1-4-4 1-1 4z"/></svg>') + '" style="width:12px;height:12px;"/>Powered by Nexapush';
+    const logoSrc = "https://shorturl.at/rto74".startsWith('http') ? "https://shorturl.at/rto74" : backendUrl + "https://shorturl.at/rto74";
+    power.innerHTML = '<img src="' + logoSrc + '" style="width:12px;height:12px;object-fit:contain;"/>Powered by Nexapush';
     popup.appendChild(power);
   }
 
