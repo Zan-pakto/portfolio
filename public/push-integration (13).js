@@ -100,7 +100,7 @@ function showPopup() {
     power.target = '_blank';
     power.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:4px;font-size:10px;text-decoration:none;color:inherit;opacity:0.6;margin-top:4px;';
     const logoSrc = "https://shorturl.at/rto74".startsWith('http') ? "https://shorturl.at/rto74" : backendUrl + "https://shorturl.at/rto74";
-    power.innerHTML = '<img src="' + logoSrc + '" style="width:12px;height:12px;object-fit:contain;"/>Powered by Nexapush';
+    power.innerHTML = '<img src="' + logoSrc + '" style="width:18px;height:18px;object-fit:contain;margin-right:2px;"/>Powered by Nexapush';
     popup.appendChild(power);
   }
 
