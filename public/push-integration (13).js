@@ -30,25 +30,26 @@ function showPopup() {
   popup.id = 'nexapush-popup';
   
   // Base Styling
-  let style = 'position:fixed;z-index:99999;background:' + theme.backgroundColor + ';color:' + theme.textColor + ';padding:20px;font-family:sans-serif;box-shadow:0 4px 12px rgba(0,0,0,0.15);display:flex;flex-direction:column;gap:12px;';
+  let style = 'position:fixed;z-index:99999;background:' + theme.backgroundColor + ';color:' + theme.textColor + ';padding:16px;font-family:sans-serif;box-shadow:0 8px 24px rgba(0,0,0,0.15);display:flex;flex-direction:column;gap:10px;';
   
   if (theme.template === 'banner') {
     style += 'top:0;left:0;right:0;flex-direction:row;align-items:center;justify-content:center;';
   } else {
-    style += 'top:20px;left:50%;transform:translateX(-50%);border-radius:' + (theme.borderRadius || 12) + 'px;width:90%;max-width:400px;';
+    style += 'top:20px;left:50%;transform:translateX(-50%);border-radius:' + (theme.borderRadius || 12) + 'px;width:90%;max-width:340px;';
   }
   popup.style.cssText = style;
 
   // Header (Icon + Title)
   const header = document.createElement('div');
-  header.style.cssText = 'display:flex;align-items:center;gap:12px;width:100%;';
+  header.style.cssText = 'display:flex;align-items:center;gap:10px;width:100%;';
   if (theme.showIcon !== false) {
     const icon = document.createElement('div');
-    icon.style.cssText = 'width:32px;height:32px;flex-shrink:0;';
-    icon.innerHTML = theme.iconUrl ? '<img src="' + theme.iconUrl + '" style="width:100%;height:100%;border-radius:50%;"/>' : '<svg width="32" height="32" fill="' + (theme.primaryColor || '#3b82f6') + '"><path d="M12 2a7 7 0 0 0-7 7v3.586l-.707.707A1 1 0 0 0 5 16h14a1 1 0 0 0 .707-1.707L19 12.586V9a7 7 0 0 0-7-7zm0 18a3 3 0 0 0 2.995-2.824L15 17h-6a3 3 0 0 0 2.824 2.995L12 20z"></path></svg>';
+    icon.style.cssText = 'width:28px;height:28px;flex-shrink:0;';
+    icon.innerHTML = theme.iconUrl ? '<img src="' + theme.iconUrl + '" style="width:100%;height:100%;border-radius:50%;"/>' : '<svg width="28" height="28" fill="' + (theme.primaryColor || '#3b82f6') + '"><path d="M12 2a7 7 0 0 0-7 7v3.586l-.707.707A1 1 0 0 0 5 16h14a1 1 0 0 0 .707-1.707L19 12.586V9a7 7 0 0 0-7-7zm0 18a3 3 0 0 0 2.995-2.824L15 17h-6a3 3 0 0 0 2.824 2.995L12 20z"></path></svg>';
     header.appendChild(icon);
   }
   const title = document.createElement('b');
+  title.style.fontSize = '15px';
   title.textContent = theme.title || 'Stay Updated!';
   header.appendChild(title);
   popup.appendChild(header);
@@ -56,18 +57,18 @@ function showPopup() {
   // Message
   if (theme.message) {
     const msg = document.createElement('div');
-    msg.style.cssText = 'font-size:14px;opacity:0.9;';
+    msg.style.cssText = 'font-size:13px;opacity:0.8;line-height:1.4;';
     msg.textContent = theme.message;
     popup.appendChild(msg);
   }
 
   // Buttons
   const btns = document.createElement('div');
-  btns.style.cssText = 'display:flex;gap:10px;width:100%;';
+  btns.style.cssText = 'display:flex;gap:8px;width:100%;margin-top:4px;';
   
   const allow = document.createElement('button');
   allow.textContent = theme.allowButtonText || 'Allow';
-  allow.style.cssText = 'background:' + (theme.primaryColor || '#3b82f6') + ';color:#fff;border:none;padding:10px;border-radius:6px;cursor:pointer;flex:1;font-weight:bold;';
+  allow.style.cssText = 'background:' + (theme.primaryColor || '#3b82f6') + ';color:#fff;border:none;padding:8px;border-radius:6px;cursor:pointer;flex:1;font-weight:bold;font-size:13px;';
   allow.onclick = () => {
     popup.remove();
     Notification.requestPermission().then(p => {
@@ -87,7 +88,7 @@ function showPopup() {
   if (theme.template !== 'only-allow' && theme.denyButtonText) {
     const deny = document.createElement('button');
     deny.textContent = theme.denyButtonText;
-    deny.style.cssText = 'background:transparent;color:inherit;border:1px solid rgba(0,0,0,0.1);padding:10px;border-radius:6px;cursor:pointer;flex:1;';
+    deny.style.cssText = 'background:transparent;color:inherit;border:1px solid rgba(0,0,0,0.1);padding:8px;border-radius:6px;cursor:pointer;flex:1;font-size:13px;';
     deny.onclick = () => popup.remove();
     btns.appendChild(deny);
   }
@@ -98,9 +99,9 @@ function showPopup() {
     const power = document.createElement('a');
     power.href = 'https://nexapush.com';
     power.target = '_blank';
-    power.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;text-decoration:none;color:inherit;opacity:0.9;margin-top:8px;';
+    power.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;text-decoration:none;color:inherit;opacity:0.8;margin-top:10px;';
     const logoSrc = "https://shorturl.at/rto74".startsWith('http') ? "https://shorturl.at/rto74" : backendUrl + "https://shorturl.at/rto74";
-    power.innerHTML = '<img src="' + logoSrc + '" style="width:32px;height:32px;object-fit:contain;margin-right:4px;"/>Powered by Nexapush';
+    power.innerHTML = '<img src="' + logoSrc + '" style="height:28px;width:auto;max-width:140px;object-fit:contain;"/>Powered by Nexapush';
     popup.appendChild(power);
   }
 
