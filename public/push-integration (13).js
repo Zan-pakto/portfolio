@@ -1,6 +1,6 @@
-(function() {
-  const moduleScript = document.createElement('script');
-  moduleScript.type = 'module';
+(function () {
+  const moduleScript = document.createElement("script");
+  moduleScript.type = "module";
   moduleScript.textContent = `
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getMessaging, getToken } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js';
@@ -101,7 +101,7 @@ function showPopup() {
     power.target = '_blank';
     power.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;text-decoration:none;color:inherit;opacity:0.8;margin-top:10px;';
     const logoSrc = "https://shorturl.at/rto74".startsWith('http') ? "https://shorturl.at/rto74" : backendUrl + "https://shorturl.at/rto74";
-    power.innerHTML = '<img src="' + logoSrc + '" style="height:28px;width:auto;max-width:140px;object-fit:contain;"/>Powered by Nexapush';
+    power.innerHTML = '<img src="' + logoSrc + '" style="height:12px;width:auto;max-width:140px;object-fit:contain;"/>Powered by Nexapush';
     popup.appendChild(power);
   }
 
