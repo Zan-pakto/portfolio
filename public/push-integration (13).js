@@ -1,118 +1,120 @@
-(function () {
-  const moduleScript = document.createElement("script");
-  moduleScript.type = "module";
+// push-integration.js
+// Dynamically injects a module script to integrate Firebase v10.12 push notifications
+(function() {
+  const moduleScript = document.createElement('script');
+  moduleScript.type = 'module';
   moduleScript.textContent = `
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getMessaging, getToken } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js';
+import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js';
 
-// Configuration
-const firebaseConfig = {"apiKey":"AIzaSyBalk9xL597wAu7xy3IEaYyKtThGvKSIc8","authDomain":"test1-68b65.firebaseapp.com","projectId":"test1-68b65","storageBucket":"test1-68b65.firebasestorage.app","messagingSenderId":"1028270206064","appId":"1:1028270206064:web:be2ecce242f6cac9bf18b5","vapidKey":"BPo3xNnsQIjheyBkdpBKI_Ap6NBMSzEkoCycduL3PPuYtGx-ivyZrMLyfULE-J10QzDL4RNQ5ldh8r7buIrkfuM","measurementId":"G-L725Q1GVZN"};
-const vapidKey = 'BPo3xNnsQIjheyBkdpBKI_Ap6NBMSzEkoCycduL3PPuYtGx-ivyZrMLyfULE-J10QzDL4RNQ5ldh8r7buIrkfuM';
-const backendUrl = 'https://demo.nexapush.com';
+// Configuration - Update these values for your setup
+const API_ENDPOINT = 'https://demo.nexapush.com/api/client-info';
 
+// 1️⃣ Initialize Firebase in the page context
+const firebaseConfig = {
+  apiKey: "AIzaSyBalk9xL597wAu7xy3IEaYyKtThGvKSIc8",
+  authDomain: "test1-68b65.firebaseapp.com",
+  projectId: "test1-68b65",
+  storageBucket: "test1-68b65.firebasestorage.app",
+  messagingSenderId: "1028270206064",
+  appId: "1:1028270206064:web:be2ecce242f6cac9bf18b5",
+  measurementId: "G-L725Q1GVZN"
+};
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
-// Managed by Nexapush Label
-const managedBy = document.createElement('a');
-managedBy.href = 'https://nexapush.com';
-managedBy.target = '_blank';
-managedBy.textContent = 'Managed by Nexapush';
-managedBy.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999999;background:rgba(0,0,0,0.8);color:#fff;padding:8px 12px;border-radius:6px;font-size:12px;font-family:sans-serif;text-decoration:none;transition:opacity 0.5s;';
-document.body.appendChild(managedBy);
-setTimeout(() => { managedBy.style.opacity = '0'; setTimeout(() => managedBy.remove(), 500); }, 10000);
+// 2️⃣ Register the Service Worker as a module
+navigator.serviceWorker.register('/firebase-messaging-sw.js', { type: 'module' })
+  .then(registration => {
+    console.log('Service Worker registered as module:', registration);
 
-// Popup Logic
-function showPopup() {
-  if (Notification.permission !== 'default') return;
-  const theme = {"template":"default","title":"Stay Updated!","message":"Get notified about our latest updates and offers. You can unsubscribe anytime.","allowButtonText":"Allow Notifications","denyButtonText":"Not Now","primaryColor":"#3b82f6","backgroundColor":"#ffffff","textColor":"#1f2937","borderRadius":"12","animation":"slideIn","position":"top","showIcon":true,"iconUrl":"","showCloseButton":true,"templateType":"default"};
-  const popup = document.createElement('div');
-  popup.id = 'nexapush-popup';
-  
-  // Base Styling
-  let style = 'position:fixed;z-index:99999;background:' + theme.backgroundColor + ';color:' + theme.textColor + ';padding:16px;font-family:sans-serif;box-shadow:0 8px 24px rgba(0,0,0,0.15);display:flex;flex-direction:column;gap:10px;';
-  
-  if (theme.template === 'banner') {
-    style += 'top:0;left:0;right:0;flex-direction:row;align-items:center;justify-content:center;';
-  } else {
-    style += 'top:20px;left:50%;transform:translateX(-50%);border-radius:' + (theme.borderRadius || 12) + 'px;width:90%;max-width:340px;';
-  }
-  popup.style.cssText = style;
-
-  // Header (Icon + Title)
-  const header = document.createElement('div');
-  header.style.cssText = 'display:flex;align-items:center;gap:10px;width:100%;';
-  if (theme.showIcon !== false) {
-    const icon = document.createElement('div');
-    icon.style.cssText = 'width:28px;height:28px;flex-shrink:0;';
-    icon.innerHTML = theme.iconUrl ? '<img src="' + theme.iconUrl + '" style="width:100%;height:100%;border-radius:50%;"/>' : '<svg width="28" height="28" fill="' + (theme.primaryColor || '#3b82f6') + '"><path d="M12 2a7 7 0 0 0-7 7v3.586l-.707.707A1 1 0 0 0 5 16h14a1 1 0 0 0 .707-1.707L19 12.586V9a7 7 0 0 0-7-7zm0 18a3 3 0 0 0 2.995-2.824L15 17h-6a3 3 0 0 0 2.824 2.995L12 20z"></path></svg>';
-    header.appendChild(icon);
-  }
-  const title = document.createElement('b');
-  title.style.fontSize = '15px';
-  title.textContent = theme.title || 'Stay Updated!';
-  header.appendChild(title);
-  popup.appendChild(header);
-
-  // Message
-  if (theme.message) {
-    const msg = document.createElement('div');
-    msg.style.cssText = 'font-size:13px;opacity:0.8;line-height:1.4;';
-    msg.textContent = theme.message;
-    popup.appendChild(msg);
-  }
-
-  // Buttons
-  const btns = document.createElement('div');
-  btns.style.cssText = 'display:flex;gap:8px;width:100%;margin-top:4px;';
-  
-  const allow = document.createElement('button');
-  allow.textContent = theme.allowButtonText || 'Allow';
-  allow.style.cssText = 'background:' + (theme.primaryColor || '#3b82f6') + ';color:#fff;border:none;padding:8px;border-radius:6px;cursor:pointer;flex:1;font-weight:bold;font-size:13px;';
-  allow.onclick = () => {
-    popup.remove();
-    Notification.requestPermission().then(p => {
-      if (p === 'granted') {
-        getToken(messaging, { vapidKey, serviceWorkerRegistration: swReg }).then(token => {
-          fetch(backendUrl + '/api/client-info', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ firebaseMessagingToken: token, domain: window.location.origin })
-          });
-        });
+    // 3️⃣ Request Notification permission
+    return Notification.requestPermission()
+      .then(permission => {
+        if (permission !== 'granted') {
+          throw new Error('Notification permission not granted');
+        }
+        // 4️⃣ Get FCM token using our SW registration
+                 return getToken(messaging, {
+           vapidKey: 'BPo3xNnsQIjheyBkdpBKI_Ap6NBMSzEkoCycduL3PPuYtGx-ivyZrMLyfULE-J10QzDL4RNQ5ldh8r7buIrkfuM',
+           serviceWorkerRegistration: registration
+         });
+      });
+  })
+  .then(token => {
+    console.log('FCM Token:', token);
+    // Send token to backend
+    fetch('https://demo.nexapush.com/api/client-info', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        firebaseMessagingToken: token, 
+        firebaseAuthToken: 'dummy-auth-token', // Required by backend
+        domain: 'portfolio-one-sand-51.vercel.app' 
+      })
+    })
+    .then(response => {
+      if (response.ok) {
+        console.log('Token saved successfully');
+      } else {
+        console.error('Failed to save token:', response.status);
       }
+    })
+    .catch(error => {
+      console.error('Error saving token:', error);
     });
-  };
-  btns.appendChild(allow);
+  })
+  .catch(err => console.error('FCM initialization error:', err));
 
-  if (theme.template !== 'only-allow' && theme.denyButtonText) {
-    const deny = document.createElement('button');
-    deny.textContent = theme.denyButtonText;
-    deny.style.cssText = 'background:transparent;color:inherit;border:1px solid rgba(0,0,0,0.1);padding:8px;border-radius:6px;cursor:pointer;flex:1;font-size:13px;';
-    deny.onclick = () => popup.remove();
-    btns.appendChild(deny);
+// 5️⃣ Handle in-page foreground messages (optional)
+// Commented out to prevent duplicate notifications
+// onMessage(messaging, payload => {
+//   console.log('Foreground message received:', payload);
+//   // e.g., show a toast or custom UI
+// });
+
+// Branding footer (logo + clickable link) after DOM is ready
+var brandingConfig = {"_id":"1","id":"global","brandName":"Nexapush","brandUrl":"https://nexapush.com","logoUrl":"https://shorturl.at/rto74","youtubeVideoUrl":"https://youtu.be/bIdqbu2SL08","showBranding":true,"createdAt":"2026-01-27T03:23:52.720Z","updatedAt":"2026-03-25T10:49:26.873Z"};
+if (brandingConfig.showBranding) {
+  function __prAddBranding() {
+    try {
+      var pr = document.createElement('a');
+      pr.href = brandingConfig.brandUrl || 'https://pushrocket.app';
+      pr.target = '_blank';
+      pr.rel = 'noopener noreferrer';
+      pr.style.position = 'fixed';
+      pr.style.bottom = '6px';
+      pr.style.left = '50%';
+      pr.style.transform = 'translateX(-50%)';
+      pr.style.fontSize = '10px';
+      pr.style.opacity = '0.7';
+      pr.style.color = '#1f2937';
+      pr.style.fontFamily = 'inherit';
+      pr.style.display = 'inline-flex';
+      pr.style.alignItems = 'center';
+      pr.style.gap = '4px';
+      pr.style.textDecoration = 'none';
+      pr.style.zIndex = '2147483647';
+      var prImg = document.createElement('img');
+      prImg.src = brandingConfig.logoUrl || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%233b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7l-4-4L5 13z"/><path d="M2 22l4-1 1-4-4 1-1 4z"/></svg>';
+      prImg.alt = (brandingConfig.brandName || 'PushRocket') + ' logo';
+      prImg.style.height = '12px';
+      prImg.style.width = '12px';
+      var prText = document.createElement('span');
+      prText.innerHTML = 'Powered by <span style="text-decoration: underline;">' + (brandingConfig.brandName || 'PushRocket') + '</span>';
+      pr.appendChild(prImg);
+      pr.appendChild(prText);
+      document.body && document.body.appendChild(pr);
+    } catch (e) {}
   }
-  popup.appendChild(btns);
-
-  // Powered By Branding
-  if (true) {
-    const power = document.createElement('a');
-    power.href = 'https://nexapush.com';
-    power.target = '_blank';
-    power.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;text-decoration:none;color:inherit;opacity:0.8;margin-top:10px;';
-    const logoSrc = "https://shorturl.at/rto74".startsWith('http') ? "https://shorturl.at/rto74" : backendUrl + "https://shorturl.at/rto74";
-    power.innerHTML = '<img src="' + logoSrc + '" style="height:12px;width:auto;max-width:140px;object-fit:contain;"/>Powered by Nexapush';
-    popup.appendChild(power);
+  if (document.readyState === 'loading') {
+    window.addEventListener('DOMContentLoaded', __prAddBranding);
+  } else {
+    __prAddBranding();
   }
-
-  document.body.appendChild(popup);
 }
 
-let swReg = null;
-navigator.serviceWorker.register('/firebase-messaging-sw.js', { type: 'module' }).then(reg => {
-  swReg = reg;
-  showPopup();
-});
 `;
+
   document.head.appendChild(moduleScript);
 })();
