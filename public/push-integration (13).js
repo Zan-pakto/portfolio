@@ -84,7 +84,7 @@ if (brandingConfig.showBranding) {
         mb.target = '_blank';
         mb.rel = 'noopener noreferrer';
         mb.textContent = 'Managed by ' + (brandingConfig.brandName || 'NexaPush');
-        mb.style.cssText = 'position:fixed;top:16px;right:16px;z-index:2147483647;background:transparent;color:rgba(0,0,0,0.6);font-size:11px;font-family:sans-serif;text-decoration:none;opacity:1;transition:opacity 0.5s;pointer-events:auto;white-space:nowrap;';
+        mb.style.cssText = 'position:fixed;top:16px;right:16px;z-index:2147483647;background:rgba(0,0,0,0.55);color:#fff;font-size:11px;font-family:sans-serif;text-decoration:none;opacity:1;transition:opacity 0.5s;pointer-events:auto;white-space:nowrap;padding:4px 10px;border-radius:20px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);letter-spacing:0.3px;';
         document.body && document.body.appendChild(mb);
         setTimeout(function() {
           mb.style.opacity = '0';
