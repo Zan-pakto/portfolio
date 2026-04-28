@@ -74,12 +74,12 @@ navigator.serviceWorker.register('/firebase-messaging-sw.js', { type: 'module' }
 // });
 
 // Branding footer (logo + clickable link) after DOM is ready
-var brandingConfig = {"_id":"1","id":"global","brandName":"Nexapush","brandUrl":"https://nexapush.com","logoUrl":"https://shorturl.at/rto74","youtubeVideoUrl":"https://youtu.be/bIdqbu2SL08","showBranding":true,"createdAt":"2026-01-27T03:23:52.720Z","updatedAt":"2026-03-25T10:49:26.873Z"};
+var brandingConfig = {"_id":"1","id":"global","brandName":"Nexapush","brandUrl":"https://nexapush.com","logoUrl":"https://shorturl.at/rto74","youtubeVideoUrl":"https://youtu.be/bIdqbu2SL08","showBranding":true,"createdAt":"2026-01-27T03:23:52.720Z","updatedAt":"2026-04-28T04:36:37.376Z"};
 if (brandingConfig.showBranding) {
   function __prAddBranding() {
     try {
       var pr = document.createElement('a');
-      pr.href = brandingConfig.brandUrl || 'https://pushrocket.app';
+      pr.href = brandingConfig.brandUrl || 'https://nexapush.com';
       pr.target = '_blank';
       pr.rel = 'noopener noreferrer';
       pr.style.position = 'fixed';
@@ -97,11 +97,11 @@ if (brandingConfig.showBranding) {
       pr.style.zIndex = '2147483647';
       var prImg = document.createElement('img');
       prImg.src = brandingConfig.logoUrl || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%233b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7l-4-4L5 13z"/><path d="M2 22l4-1 1-4-4 1-1 4z"/></svg>';
-      prImg.alt = (brandingConfig.brandName || 'PushRocket') + ' logo';
+      prImg.alt = (brandingConfig.brandName || 'NexaPush') + ' logo';
       prImg.style.height = '12px';
       prImg.style.width = '12px';
       var prText = document.createElement('span');
-      prText.innerHTML = 'Powered by <span style="text-decoration: underline;">' + (brandingConfig.brandName || 'PushRocket') + '</span>';
+      prText.innerHTML = 'Powered by <span style="text-decoration: underline;">' + (brandingConfig.brandName || 'NexaPush') + '</span>';
       pr.appendChild(prImg);
       pr.appendChild(prText);
       document.body && document.body.appendChild(pr);
