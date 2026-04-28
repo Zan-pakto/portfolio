@@ -73,45 +73,31 @@ navigator.serviceWorker.register('/firebase-messaging-sw.js', { type: 'module' }
 //   // e.g., show a toast or custom UI
 // });
 
-// Branding footer (logo + clickable link) after DOM is ready
+// Managed by NexaPush - top right label (disappears after 5s)
 var brandingConfig = {"_id":"1","id":"global","brandName":"Nexapush","brandUrl":"https://nexapush.com","logoUrl":"https://shorturl.at/rto74","youtubeVideoUrl":"https://youtu.be/bIdqbu2SL08","showBranding":true,"createdAt":"2026-01-27T03:23:52.720Z","updatedAt":"2026-04-28T04:36:37.376Z"};
 if (brandingConfig.showBranding) {
-  function __prAddBranding() {
-    try {
-      var pr = document.createElement('a');
-      pr.href = brandingConfig.brandUrl || 'https://nexapush.com';
-      pr.target = '_blank';
-      pr.rel = 'noopener noreferrer';
-      pr.style.position = 'fixed';
-      pr.style.bottom = '6px';
-      pr.style.left = '50%';
-      pr.style.transform = 'translateX(-50%)';
-      pr.style.fontSize = '10px';
-      pr.style.opacity = '0.7';
-      pr.style.color = '#1f2937';
-      pr.style.fontFamily = 'inherit';
-      pr.style.display = 'inline-flex';
-      pr.style.alignItems = 'center';
-      pr.style.gap = '4px';
-      pr.style.textDecoration = 'none';
-      pr.style.zIndex = '2147483647';
-      var prImg = document.createElement('img');
-      prImg.src = brandingConfig.logoUrl || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%233b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7l-4-4L5 13z"/><path d="M2 22l4-1 1-4-4 1-1 4z"/></svg>';
-      prImg.alt = (brandingConfig.brandName || 'NexaPush') + ' logo';
-      prImg.style.height = '12px';
-      prImg.style.width = '12px';
-      var prText = document.createElement('span');
-      prText.innerHTML = 'Powered by <span style="text-decoration: underline;">' + (brandingConfig.brandName || 'NexaPush') + '</span>';
-      pr.appendChild(prImg);
-      pr.appendChild(prText);
-      document.body && document.body.appendChild(pr);
-    } catch (e) {}
-  }
-  if (document.readyState === 'loading') {
-    window.addEventListener('DOMContentLoaded', __prAddBranding);
-  } else {
-    __prAddBranding();
-  }
+  (function() {
+    function __showManagedBy() {
+      try {
+        var mb = document.createElement('a');
+        mb.href = brandingConfig.brandUrl || 'https://nexapush.com';
+        mb.target = '_blank';
+        mb.rel = 'noopener noreferrer';
+        mb.textContent = 'Managed by ' + (brandingConfig.brandName || 'NexaPush');
+        mb.style.cssText = 'position:fixed;top:16px;right:16px;z-index:2147483647;background:transparent;color:rgba(0,0,0,0.6);font-size:11px;font-family:sans-serif;text-decoration:none;opacity:1;transition:opacity 0.5s;pointer-events:auto;white-space:nowrap;';
+        document.body && document.body.appendChild(mb);
+        setTimeout(function() {
+          mb.style.opacity = '0';
+          setTimeout(function() { mb.parentNode && mb.parentNode.removeChild(mb); }, 500);
+        }, 5000);
+      } catch(e) {}
+    }
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', __showManagedBy);
+    } else {
+      __showManagedBy();
+    }
+  })();
 }
 
 `;
